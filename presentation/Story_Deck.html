@@ -1,0 +1,1150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Study Smarter, Not Harder</title>
+<meta name="description" content="A case file in three acts: what 649 students' grades say about studying, history and the zeros that hid the truth. MPBA G505, BITS Pilani Dubai.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================ tokens */
+:root{
+  --bg:#0B0C10; --bg2:#101218; --surface:#151821; --surface2:#1B1F2A; --line:#2A2F3B; --grid:#1F232D;
+  --ink:#EEEAE3; --ink2:#C2C5CC; --muted:#959AA5;
+  --data:#596171; --data2:#7D8697; --dataSoft:rgba(125,134,151,.16);
+  --accent:#F4B740; --accentInk:#FFCF6E; --accentSoft:rgba(244,183,64,.16); --accentGlow:rgba(244,183,64,.55);
+  --pass:#5CC48E; --watch:#E9925A; --flag:#EE6A5E;
+  --serif:"Fraunces","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.2,.7,.2,1);
+  color-scheme:dark;
+}
+:root[data-theme="light"]{
+  --bg:#F6F3EC; --bg2:#EFEBE2; --surface:#FFFFFF; --surface2:#F3EFE6; --line:#D9D3C7; --grid:#E6E1D6;
+  --ink:#17191E; --ink2:#3A3E47; --muted:#5A5F69;
+  --data:#A9AFBA; --data2:#7E8695; --dataSoft:rgba(126,134,149,.16);
+  --accent:#C98A12; --accentInk:#8A5A00; --accentSoft:rgba(201,138,18,.14); --accentGlow:rgba(201,138,18,.45);
+  --pass:#1F8A55; --watch:#B55A1C; --flag:#C23B30;
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--sans);overflow:hidden;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button{font:inherit;color:inherit}
+
+/* ============================================================ viewport & stage */
+#viewport{position:fixed;left:0;right:0;top:0;bottom:0;overflow:hidden}
+#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;background:var(--bg);overflow:hidden}
+#stage::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(1200px 700px at 78% -10%,rgba(244,183,64,.07),transparent 60%),
+             radial-gradient(900px 700px at -10% 110%,rgba(120,140,180,.07),transparent 60%)}
+:root[data-theme="light"] #stage::before{background:radial-gradient(1200px 700px at 78% -10%,rgba(201,138,18,.07),transparent 60%)}
+.slide{position:absolute;inset:0;padding:84px 120px 112px;display:flex;flex-direction:column;
+  visibility:hidden;opacity:0;transition:opacity .5s var(--ease),visibility 0s .5s}
+.slide.current{visibility:visible;opacity:1;transition:opacity .5s var(--ease)}
+.slide > aside.notes{display:none}
+
+/* ============================================================ type */
+.kicker{font-family:var(--mono);font-size:20px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  display:flex;align-items:center;gap:16px;margin-bottom:22px}
+.kicker b{color:var(--accentInk);font-weight:500}
+.kicker .rule{flex:0 0 56px;height:1px;background:var(--line)}
+.hl{font-family:var(--serif);font-weight:500;font-size:58px;line-height:1.08;letter-spacing:-.012em;max-width:1640px;
+  font-variation-settings:"opsz" 96;text-wrap:balance}
+.hl em{font-style:normal;color:var(--accentInk)}
+.sub{font-size:27px;line-height:1.45;color:var(--ink2);max-width:1400px;margin-top:18px}
+.body{flex:1;position:relative;margin-top:30px;min-height:0}
+.foot{position:absolute;left:120px;right:120px;bottom:30px;display:flex;justify-content:space-between;gap:40px;
+  font-size:17px;color:var(--muted);line-height:1.35}
+.foot .src{max-width:1300px}
+.num{font-family:var(--mono);font-feature-settings:"tnum" 1}
+.sg{font-family:var(--sans);font-weight:300;margin-right:.03em;font-size:.86em;vertical-align:.04em}
+.btable{align-self:start}
+.acc{color:var(--accentInk)}
+.muted{color:var(--muted)}
+.big{font-family:var(--serif);font-weight:500;font-variation-settings:"opsz" 144;letter-spacing:-.02em;line-height:1}
+svg text{font-family:var(--sans);fill:var(--ink2)}
+svg .t-m{fill:var(--muted)} svg .t-i{fill:var(--ink)} svg .t-a{fill:var(--accentInk)}
+svg .mono{font-family:var(--mono)}
+
+/* ============================================================ components */
+.why{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;
+  padding:22px 26px;font-size:22px;line-height:1.45;color:var(--ink2)}
+.why h4{font-family:var(--mono);font-size:16px;letter-spacing:.14em;text-transform:uppercase;color:var(--accentInk);
+  font-weight:500;margin-bottom:10px}
+.why strong{color:var(--ink);font-weight:600}
+.why .concept{display:inline-block;margin-top:12px;font-family:var(--mono);font-size:16px;color:var(--muted);
+  border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+.method{font-family:var(--mono);font-size:17.5px;color:var(--muted);line-height:1.6;border-top:1px solid var(--line);padding-top:14px}
+.method b{color:var(--ink2);font-weight:500}
+.chip{display:inline-flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:999px;
+  padding:8px 18px;font-size:20px;color:var(--ink2)}
+.chip .dot{width:10px;height:10px;border-radius:50%}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px 32px}
+.caveat{font-size:20px;color:var(--muted);line-height:1.45}
+.caveat::before{content:"\25B2  ";color:var(--accentInk);font-size:14px;vertical-align:2px}
+.grid2{display:grid;grid-template-columns:1fr 480px;gap:56px;height:100%}
+.grid2.wide{grid-template-columns:1fr 520px}
+.col{display:flex;flex-direction:column;gap:22px;min-height:0}
+.chart{position:relative;width:100%;height:100%}
+.chart svg{display:block;width:100%;height:100%;overflow:visible}
+.legend{display:flex;gap:28px;font-size:19px;color:var(--ink2);align-items:center}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:50%;margin-right:8px;vertical-align:-1px}
+
+/* ============================================================ step & motion system */
+.s{opacity:0;transition:opacity .6s var(--ease) var(--d,0s),transform .8s var(--ease) var(--d,0s)}
+.s.on{opacity:1}
+.rise{transform:translateY(14px)} .rise.on{transform:none}
+.off{opacity:0 !important;transition:opacity .35s ease !important}
+.grow{transform:scaleY(0);transform-box:fill-box;transform-origin:50% 100%;transition:transform 1s var(--ease) var(--d,0s),opacity .4s ease var(--d,0s),fill .6s ease,stroke .6s ease}
+.grow.on{transform:scaleY(1)}
+.growx{transform:scaleX(0);transform-box:fill-box;transform-origin:0 50%;transition:transform 1s var(--ease) var(--d,0s),opacity .4s ease var(--d,0s)}
+.growx.on{transform:scaleX(1)}
+.growxr{transform-origin:100% 50%}
+.pop{transform:scale(0);transform-box:fill-box;transform-origin:50% 50%;transition:transform .7s cubic-bezier(.3,1.5,.5,1) var(--d,0s),opacity .3s ease var(--d,0s),fill .6s ease}
+.pop.on{transform:scale(1)}
+.draw{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.4s var(--ease) var(--d,0s),opacity .3s ease var(--d,0s)}
+.draw.on{stroke-dashoffset:0}
+.dim{opacity:.28 !important}
+.glow{animation:glow 2.4s ease-in-out infinite}
+@keyframes glow{0%,100%{opacity:.25;transform:scale(1)}50%{opacity:.75;transform:scale(1.25)}}
+.glow{transform-box:fill-box;transform-origin:50% 50%}
+.all .s,.all .grow,.all .growx,.all .pop,.all .draw{opacity:1;transform:none;stroke-dashoffset:0;transition:none !important}
+.all [data-hide]{opacity:0 !important}
+.all .glow{animation:none;opacity:.5}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:.01ms !important;transition-delay:0s !important;animation:none !important}
+}
+body.static *{transition:none !important;animation:none !important}
+
+/* ============================================================ chrome (outside stage) */
+#progress{position:fixed;left:0;bottom:0;height:3px;background:var(--accent);width:0;transition:width .5s var(--ease);z-index:20}
+#progress.backup{background:var(--data2)}
+#counter{position:fixed;right:18px;bottom:12px;font-family:var(--mono);font-size:13px;color:var(--muted);z-index:20;
+  letter-spacing:.06em;opacity:.8;user-select:none}
+#hint{position:fixed;left:18px;bottom:12px;font-family:var(--mono);font-size:12px;color:var(--muted);z-index:20;opacity:0;transition:opacity .6s}
+body.show-hint #hint{opacity:.8}
+#viewport{cursor:pointer}
+#notes{position:fixed;left:0;right:0;bottom:0;height:38vh;background:var(--bg2);border-top:1px solid var(--line);
+  z-index:30;display:none;grid-template-columns:1fr 340px;gap:28px;padding:18px 28px 26px;overflow:hidden}
+body.notes #notes{display:grid}
+#notes .n-body{overflow:auto;font-size:17px;line-height:1.55;color:var(--ink2);padding-right:12px}
+#notes .n-body h5{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accentInk);margin:10px 0 4px;font-weight:500}
+#notes .n-body p{margin:0 0 8px} #notes .n-body q{color:var(--ink)}
+#notes .n-body .say{color:var(--ink);border-left:2px solid var(--accent);padding-left:12px;margin:6px 0 10px}
+#notes .n-side{font-family:var(--mono);font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:10px}
+#notes .n-side .clock{font-size:40px;color:var(--ink);font-feature-settings:"tnum" 1}
+#notes .n-side .next{color:var(--ink2);font-family:var(--sans);font-size:15px;line-height:1.4}
+#overview{position:fixed;inset:0;z-index:40;background:var(--bg);overflow:auto;padding:36px 40px;display:none}
+body.overview #overview{display:block}
+#overview h3{font-family:var(--mono);font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:8px 0 16px;font-weight:500}
+#overview .ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px;margin-bottom:30px}
+.thumb{position:relative;aspect-ratio:16/9;border:1px solid var(--line);border-radius:8px;overflow:hidden;cursor:pointer;background:var(--bg)}
+.thumb:hover,.thumb.cur{outline:2px solid var(--accent);outline-offset:2px}
+.thumb .inner{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;pointer-events:none}
+.thumb .inner .slide{visibility:visible;opacity:1;transition:none}
+.thumb .lab{position:absolute;left:8px;top:6px;font-family:var(--mono);font-size:12px;color:var(--muted);background:var(--bg);padding:1px 6px;border-radius:4px;z-index:2}
+
+/* ============================================================ slide-specific */
+/* S1 */
+#s1 .title{font-family:var(--serif);font-weight:500;font-size:118px;line-height:.98;letter-spacing:-.03em;font-variation-settings:"opsz" 144}
+#s1 .title span{color:var(--accentInk)}
+#s1 .q{font-family:var(--serif);font-size:44px;line-height:1.2;max-width:1180px;margin-top:34px;color:var(--ink);font-variation-settings:"opsz" 72}
+.guess{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:20px;color:var(--muted)}
+.guess button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:22px;position:relative;z-index:6}
+.guess button:hover{border-color:var(--accent)}
+.guess .gv{font-size:40px;color:var(--accentInk);min-width:110px;text-align:center}
+/* S8 share bars */
+.share{display:grid;grid-template-columns:210px 1fr;gap:14px 18px;align-items:center;font-size:21px;color:var(--ink2)}
+.share .bar{height:46px;background:var(--surface2);border-radius:6px;position:relative;overflow:hidden}
+.share .bar > i{position:absolute;left:0;top:0;bottom:0;border-radius:6px}
+.share .bar > span{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:24px;color:var(--ink)}
+/* S11 */
+.ab{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.abcard{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px 30px;position:relative;cursor:pointer;z-index:6}
+.abcard:hover{border-color:var(--data2)}
+.abcard h3{font-family:var(--serif);font-weight:500;font-size:40px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:baseline}
+.abcard h3 .votes{font-family:var(--mono);font-size:18px;color:var(--muted)}
+.abcard ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;font-size:22px;color:var(--ink2)}
+.abcard li b{display:block;font-family:var(--mono);font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:400}
+/* S12 */
+.score{width:100%;border-collapse:collapse;font-size:21px}
+.score td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:middle;color:var(--ink2)}
+.score td:first-child{color:var(--ink);font-weight:500;width:300px}
+.score .stat{font-family:var(--mono);font-size:18.5px}
+.score .act{color:var(--muted);font-size:19px;width:420px}
+.pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:15px;letter-spacing:.08em;text-transform:uppercase;
+  padding:4px 12px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.pill.pass{color:var(--pass)} .pill.watch{color:var(--watch)} .pill.flag{color:var(--flag)} .pill.na{color:var(--muted)}
+/* S13/S14 */
+.lim{display:grid;grid-template-columns:1fr 1fr;gap:22px 40px}
+.lim .item{border-top:1px solid var(--line);padding-top:16px}
+.lim .item h4{font-size:24px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.lim .item p{font-size:20px;line-height:1.45;color:var(--ink2)}
+.verdict{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:10px}
+.verdict .v{border-top:2px solid var(--line);padding-top:22px}
+.verdict .v.key{border-top-color:var(--accent)}
+.verdict .v .n{font-family:var(--serif);font-size:84px;line-height:1;letter-spacing:-.02em;font-variation-settings:"opsz" 144}
+.verdict .v h3{font-family:var(--serif);font-weight:500;font-size:36px;margin:16px 0 8px;line-height:1.15}
+.verdict .v p{font-size:21px;color:var(--ink2);line-height:1.45}
+.takeaway{font-family:var(--serif);font-size:54px;line-height:1.15;letter-spacing:-.01em;font-variation-settings:"opsz" 120}
+.btable{width:100%;border-collapse:collapse;font-size:20px}
+.btable th{font-family:var(--mono);font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:400;text-align:right;padding:8px 14px;border-bottom:1px solid var(--line)}
+.btable th:first-child,.btable td:first-child{text-align:left}
+.btable td{padding:10px 14px;border-bottom:1px solid var(--grid);text-align:right;font-family:var(--mono);color:var(--ink2);font-size:19px}
+.btable td:first-child{font-family:var(--sans);color:var(--ink)}
+.tag-fragile{font-family:var(--mono);font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--watch);border:1px solid var(--watch);border-radius:999px;padding:3px 10px;margin-left:10px;vertical-align:4px}
+.backup-badge{font-family:var(--mono);font-size:15px;letter-spacing:.14em;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 12px;margin-left:auto}
+
+/* ============================================================ print: one slide per page */
+@page{size:1920px 1080px;margin:0}
+@media print{
+  html,body{overflow:visible;height:auto;background:var(--bg)}
+  #viewport{position:static} #stage{position:static;transform:none !important;height:auto;overflow:visible}
+  #stage::before{display:none}
+  .slide{position:relative;visibility:visible !important;opacity:1 !important;width:1920px;height:1080px;break-after:page;page-break-after:always;overflow:hidden}
+  .slide .s,.slide .grow,.slide .growx,.slide .pop,.slide .draw{opacity:1 !important;transform:none !important;stroke-dashoffset:0 !important;transition:none !important}
+  .slide [data-hide]{display:none !important}
+  .glow{animation:none !important}
+  #progress,#counter,#hint,#notes,#overview{display:none !important}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+
+<!-- ======================================================= 1 THE BET -->
+<section class="slide" id="s1" data-time="0:35" data-steps="1">
+  <div class="kicker"><b>Case file</b><span class="rule"></span>MPBA G505 Statistics &amp; Basic Econometrics · BITS Pilani Dubai</div>
+  <div class="title">Study smarter,<br><span>not harder.</span></div>
+  <p class="q">Two students. One studies <em class="acc" style="font-style:normal">under 2 hours</em> a week, the other <em class="acc" style="font-style:normal">5 to 10 hours</em>. On average, how many points apart are their final grades?</p>
+  <div class="body">
+    <div class="chart" data-chart="ruler" style="height:210px;margin-top:6px"></div>
+    <div class="guess" style="position:absolute;right:0;bottom:0">
+      <span>Class guess</span>
+      <button type="button" data-g="-0.5" aria-label="Lower the class guess">&minus;</button>
+      <span class="gv num" id="gv">?</span>
+      <button type="button" data-g="0.5" aria-label="Raise the class guess">+</button>
+    </div>
+  </div>
+  <div class="foot"><span class="src">Data: Cortez (2008), UCI Student Performance, Portuguese-language course. Shout a number; the presenter types it with + / &minus; (or the keys [ and ]).</span><span class="num">01</span></div>
+  <aside class="notes" data-speaker="Speaker 1" data-concept="Curiosity gap: the audience commits to a number before seeing data.">
+    <h5>Cue</h5><p>Walk to the front. Pause two seconds before speaking. Point at the two pins.</p>
+    <h5>Say</h5>
+    <p class="say">"Two students. One studies less than two hours a week. The other studies five to ten. Grades are out of twenty. How many points apart are they? Shout a number."</p>
+    <p>Take three guesses (30 s max). Type the median with + / &minus; or [ and ]. It reappears on slides 3 and 14.</p>
+    <p class="say">"Hold on to that number. By the end you'll know the real gap, why it shrinks, and why fifteen students almost fooled us."</p>
+  </aside>
+</section>
+
+<!-- ======================================================= 2 THE CASE FILE -->
+<section class="slide" id="s2" data-time="0:25" data-steps="0">
+  <div class="kicker"><b>The evidence</b><span class="rule"></span>What we have, and what it can't tell us</div>
+  <h2 class="hl"><span data-v="card.n_por" data-f="int"></span> students, three grades each, and one <em>self-reported</em> study bracket</h2>
+  <div class="body">
+    <div class="chart" data-chart="casefile"></div>
+  </div>
+  <div class="foot"><span class="src">Cortez, P. (2008). <i>Student Performance</i> [Dataset]. UCI Machine Learning Repository. doi.org/10.24432/C5TG7T (CC BY 4.0) · Cortez &amp; Silva (2008), FUBUTEC. Two Portuguese secondary schools, 2005-06.</span><span class="num">02</span></div>
+  <aside class="notes" data-speaker="Speaker 1" data-concept="Data types: ordinal (study time), count (absences), bounded outcome (0-20).">
+    <h5>Say</h5>
+    <p class="say">"649 students in a Portuguese-language course at two schools. Each has three grades: period one, period two, and the final, G3, all out of twenty."</p>
+    <p class="say">"Study time is not hours. It's a box the student ticked: under 2, 2 to 5, 5 to 10, over 10. Self-reported, four levels, and nobody was assigned to study. So everything today is an association, not a cause."</p>
+    <h5>If asked</h5><p>33 variables per student; a second file covers maths (395 students). We come back to it in Act 3.</p>
+  </aside>
+</section>
+
+<!-- ======================================================= 3 CLUE 1 -->
+<section class="slide" id="s3" data-time="0:50" data-steps="2">
+  <div class="kicker"><b>Act 1</b><span class="rule"></span>Does studying pay?</div>
+  <h2 class="hl">Effort shows up: the 5-10 h group scores <em><span data-v="anova.tukey13" data-f="2"></span> points</em> more than the under-2 h group</h2>
+  <div class="body">
+    <div class="grid2">
+      <div class="col">
+        <div class="chart" data-chart="gradient" style="flex:1"></div>
+        <div class="method"><b>One-way ANOVA</b> F(3, 645) = <span data-v="anova.F" data-f="2"></span>, p <span data-v="anova.p" data-f="p"></span>, η² = <span data-v="anova.eta2" data-f="3"></span> · <b>Levene</b> p = <span data-v="anova.levene_p" data-f="2"></span> · <b>Kruskal-Wallis</b> H = <span data-v="anova.kw_H" data-f="1"></span>, p <span data-v="anova.kw_p" data-f="p"></span> · <b>MANOVA</b> (G1, G2, G3) Pillai = <span data-v="anova.pillai" data-f="3"></span>, p <span data-v="anova.pillai_p" data-f="p"></span></div>
+      </div>
+      <div class="col">
+        <div class="card s rise" data-s="0" style="--d:.2s">
+          <div class="muted" style="font-size:19px">Tukey HSD, &lt;2 h vs 5-10 h</div>
+          <div class="big acc" style="font-size:96px;margin:6px 0 4px"><span class="count" data-v="anova.tukey13" data-f="+2"></span></div>
+          <div class="num muted" style="font-size:19px">95% CI [<span data-v="anova.tukey13_lo" data-f="2"></span>, <span data-v="anova.tukey13_hi" data-f="2"></span>] points out of 20</div>
+          <div id="guessEcho" class="num" style="font-size:20px;margin-top:12px;color:var(--ink2)"></div>
+        </div>
+        <div class="why s rise" data-s="2">
+          <h4>Why Tukey after ANOVA</h4>
+          ANOVA only says <strong>some</strong> means differ. Tukey says <strong>which pairs</strong>, holding the error rate at 5% across all six comparisons. Grades are bounded, so Kruskal-Wallis checks we aren't leaning on normality.
+          <div class="concept">ANOVA · multiple comparisons · MANOVA</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="src">Group means with 95% CIs. The y-axis starts at 9 to make the differences visible. Group sizes: 212, 305, 97, 35.</span><span class="num">03</span></div>
+  <aside class="notes" data-speaker="Speaker 1" data-concept="One-way ANOVA, Tukey HSD, Levene, Kruskal-Wallis, MANOVA (Pillai's trace).">
+    <h5>Say (step 0)</h5>
+    <p class="say">"Your guess was on the board. The real gap: 2.38 points, with a Tukey interval from 1.4 to 3.4."</p>
+    <h5>Click 1: the plateau</h5>
+    <p class="say">"But look at the top group. Over ten hours is no better than five to ten: minus 0.17, p = 0.99. Only 35 students are up there, so the interval is wide."</p>
+    <h5>Click 2: why Tukey</h5>
+    <p class="say">"ANOVA says the four means aren't all equal: F = 15.9, eta-squared 0.07, so study time explains about 7% of the spread. Tukey tells us which pairs differ without inflating false positives. Levene says equal variances are fine; Kruskal-Wallis agrees without assuming normality. MANOVA on all three grades says the same."</p>
+    <p class="say">"So case closed? Not quite. Who are the students who study more?"</p>
+  </aside>
+</section>
+
+<!-- ======================================================= 4 WHO STUDIES -->
+<section class="slide" id="s4" data-time="0:30" data-steps="1">
+  <div class="kicker"><b>Act 1</b><span class="rule"></span>A suspicious detail</div>
+  <h2 class="hl">But the students who study more were <em>already different</em></h2>
+  <div class="body">
+    <div class="grid2 wide">
+      <div class="chart" data-chart="who"></div>
+      <div class="col" style="justify-content:center">
+        <div class="why s rise" data-s="1">
+          <h4>Why we can't stop at ANOVA</h4>
+          The raw gap mixes <strong>studying</strong> with <strong>who studies</strong>: more girls, fewer past failures, more ambition. Leave those out and their effect is credited to study time. That's <strong>omitted-variable bias</strong>, so next we compare like with like using multiple regression.
+          <div class="concept">Confounding · omitted-variable bias</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="src">Share of girls, mean number of past class failures, and share who want higher education, by study-time bracket (Portuguese course, n = 649).</span><span class="num">04</span></div>
+  <aside class="notes" data-speaker="Speaker 1" data-concept="Confounding and omitted-variable bias motivate multiple regression.">
+    <h5>Say</h5>
+    <p class="say">"Students who study 5 to 10 hours are 77% girls, versus 42% in the lowest group. They have a third as many past failures, and 96% want to go on to university."</p>
+    <p class="say">"So part of that 2.4 points may be about <i>who</i> studies, not studying. If we leave those factors out, the regression credits them to study time. Omitted-variable bias. So we compare like with like."</p>
+    <p>Hand over to Speaker 2.</p>
+  </aside>
+</section>
+
+<!-- ======================================================= 5 LADDER -->
+<section class="slide" id="s5" data-time="1:10" data-steps="3">
+  <div class="kicker"><b>Act 2</b><span class="rule"></span>Does it survive a fair comparison?</div>
+  <h2 class="hl">Fair comparisons shrink the study effect from <em><span data-v="ladder.all.0.b" data-f="+2"></span></em> to <em><span data-v="ladder.all.3.b" data-f="+2"></span></em> points per bracket</h2>
+  <div class="body">
+    <div class="grid2">
+      <div class="col">
+        <div class="chart" data-chart="ladder" style="flex:1"></div>
+        <div class="method"><b>OLS, HC3 robust SEs</b> · study time entered as one step per bracket (dummy coding in backup) · bars = coefficient, whiskers = 95% CI · R² under each model</div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <div class="muted" style="font-size:19px" id="ladLab">M1 · study time only</div>
+          <div class="big acc" style="font-size:110px;margin:8px 0" id="ladNum"><span class="sg">+</span>0.97</div>
+          <div class="num muted" style="font-size:19px" id="ladSub">p &lt; 0.001 · R² = 0.06</div>
+        </div>
+        <div class="why s rise" data-s="3">
+          <h4>Why M3 is our main model, not M4</h4>
+          G1 and G2 are partly <strong>results</strong> of studying, so controlling for them hides effort (<strong>bad controls</strong>). G3 correlates <span data-v="corr.G2G3" data-f="2"></span> with G2, so the jump to R² = <span data-v="ladder.all.3.r2" data-f="2"></span> is partly mechanical.
+          <div class="concept">Multiple regression · bad controls · ANCOVA</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="src">Without the 15 zero-grade students the ladder has the same shape: <span data-v="ladder.nz.0.b" data-f="+2"></span>, <span data-v="ladder.nz.1.b" data-f="+2"></span>, <span data-v="ladder.nz.2.b" data-f="+2"></span>, <span data-v="ladder.nz.3.b" data-f="+2"></span>. ANCOVA (G3 ~ study time + G1): p = <span data-v="ancova.all.p" data-f="3"></span>, partial η² = <span data-v="ancova.all.pe2" data-f="3"></span>.</span><span class="num">05</span></div>
+  <aside class="notes" data-speaker="Speaker 2" data-concept="Multiple OLS, omitted-variable bias, HC3, ANCOVA; G1/G2 as bad controls.">
+    <h5>Say (M1)</h5>
+    <p class="say">"Alone, each study bracket is worth about one point: +0.97."</p>
+    <h5>Click 1: M2</h5>
+    <p class="say">"Add past failures, absences, sex, age, school, address and whether they want higher education. It halves: +0.45. Most of the shrinkage happens here."</p>
+    <h5>Click 2: M3</h5>
+    <p class="say">"Add twelve family and social variables. It barely moves: +0.42, still significant, p = 0.001. This is our main model."</p>
+    <h5>Click 3: M4</h5>
+    <p class="say">"Add earlier grades and it vanishes: +0.05. R-squared jumps to 0.86. But careful: G1 and G2 are partly <i>caused</i> by studying, and G3 correlates 0.92 with G2. So M4 doesn't say effort is useless. It says effort works through the earlier grades."</p>
+    <p>HC3 because residual variance isn't constant (slide 12). ANCOVA with G1 tells the same story: p = 0.097.</p>
+  </aside>
+</section>
+
+<!-- ======================================================= 6 SUSPECTS -->
+<section class="slide" id="s6" data-time="0:45" data-steps="1">
+  <div class="kicker"><b>Act 2</b><span class="rule"></span>The suspect line-up</div>
+  <h2 class="hl">Ambition and past failures move grades more than an extra study bracket does</h2>
+  <div class="body">
+    <div class="grid2">
+      <div class="chart" data-chart="forest"></div>
+      <div class="col" style="justify-content:center">
+        <div class="why s rise" data-s="1">
+          <h4>Why is school support negative?</h4>
+          Weaker students are the ones who get help (<strong>selection</strong>). Study time has the same problem: grades and effort affect each other, a <strong>simultaneity</strong> problem we can name but can't solve without an instrument.
+          <div class="concept">Dummy variables · endogeneity · simultaneity</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="src">M3, all 649 students, HC3 95% CIs, in grade points; yes/no variables enter as dummies. Raw gap for ambition: +<span data-v="higher_raw.diff" data-f="2"></span> points, Cohen's d = <span data-v="higher_raw.d" data-f="2"></span> (only <span data-v="higher_raw.n_no" data-f="int"></span> students say no).</span><span class="num">06</span></div>
+  <aside class="notes" data-speaker="Speaker 2" data-concept="Dummy variables; endogeneity and simultaneity (study time and grades cause each other).">
+    <h5>Say</h5>
+    <p class="say">"Same model, every factor in grade points. Wanting to go to university: +1.8. One past failure: minus 1.4. Going from under 2 hours to 5-10 hours: +0.8. Family support: nothing."</p>
+    <p class="say">"Notice the absences row: in this model, missing ten classes costs a third of a point and isn't significant. Hold that thought."</p>
+    <h5>Click: the trap</h5>
+    <p class="say">"Extra school support is <i>negative</i>, minus 1.3. That's not help hurting. Schools give support to students who are struggling. The same reverse arrow applies to study time. That's simultaneity. We can name it, but without an instrument we can't fix it."</p>
+    <p>Hand over to Speaker 3.</p>
+  </aside>
+</section>
+
+<!-- ======================================================= 7 ACT 3 OPEN -->
+<section class="slide" id="s7" data-time="0:30" data-steps="1">
+  <div class="kicker"><b>Act 3</b><span class="rule"></span>The Perfect Attendance Paradox</div>
+  <h2 class="hl">In the full data, missing class looks <em>almost harmless</em></h2>
+  <div class="body">
+    <div class="grid2">
+      <div class="chart" data-chart="scatterA"></div>
+      <div class="col" style="justify-content:center;gap:28px">
+        <div class="card">
+          <div class="muted" style="font-size:19px">log(absences + 1) in M3</div>
+          <div class="big" style="font-size:88px;margin:6px 0"><span data-v="before_after.0.all.b" data-f="+2"></span></div>
+          <div class="num muted" style="font-size:19px">p = <span data-v="before_after.0.all.p" data-f="2"></span> · not significant</div>
+        </div>
+        <div class="card s rise" data-s="1">
+          <div class="muted" style="font-size:19px">Add G1, G2 (M4) and the sign flips</div>
+          <div class="big acc" style="font-size:88px;margin:6px 0"><span data-v="before_after.1.all.b" data-f="+2"></span></div>
+          <div class="num muted" style="font-size:19px">p = <span data-v="before_after.1.all.p" data-f="2"></span> · skipping class <i>helps</i>?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="src">Each bubble is a combination of recorded absences and final grade; area is proportional to the number of students. Line: OLS of G3 on log(absences + 1), all 649 students. Pearson r = <span data-v="pearson.all.r" data-f="2"></span>.</span><span class="num">07</span></div>
+  <aside class="notes" data-speaker="Speaker 3" data-concept="Functional form: log(abs+1) for a skewed count; a sign that makes no sense is a diagnostic.">
+    <h5>Say</h5>
+    <p class="say">"Act 3. Absences. You'd expect missing class to hurt. In our main model it barely registers: minus 0.15, not significant."</p>
+    <h5>Click</h5>
+    <p class="say">"Add earlier grades and it turns <i>positive</i> and significant. Skipping class helps? When a result makes no sense, the data is usually trying to tell you something. What would you check?"</p>
+    <p>Pause for one or two answers ("outliers", "the zeros"). Then click to the next slide.</p>
+  </aside>
+</section>
+
+<!-- ======================================================= 8 THE PARADOX (PEAK) -->
+<section class="slide" id="s8" data-time="0:55" data-steps="3">
+  <div class="kicker"><b>Act 3</b><span class="rule"></span>The Perfect Attendance Paradox</div>
+  <h2 class="hl">All <em><span data-v="zeros.n" data-f="int"></span></em> students with a final grade of 0 had <em>zero</em> recorded absences</h2>
+  <div class="body">
+    <div class="grid2">
+      <div class="chart" data-chart="scatterB"></div>
+      <div class="col" style="justify-content:center;gap:30px">
+        <div class="s rise" data-s="2">
+          <div class="muted" style="font-size:19px;margin-bottom:14px">Share with zero recorded absences</div>
+          <div class="share">
+            <span>Final grade 0<br><span class="muted num" style="font-size:17px">n = <span data-v="zeros.n" data-f="int"></span></span></span>
+            <div class="bar"><i class="s growx" data-s="2" style="width:100%;background:var(--accent);--d:.2s"></i><span class="num" style="color:#15120a"><span data-v="zeros.n_zero_abs" data-f="int"></span> of <span data-v="zeros.n" data-f="int"></span></span></div>
+            <span>Everyone else<br><span class="muted num" style="font-size:17px">n = 634</span></span>
+            <div class="bar"><i class="s growx" data-s="2" data-w="zeros.share0_rest" style="background:var(--data);--d:.35s"></i><span class="num"><span data-v="zeros.share0_rest" data-f="%0"></span></span></div>
+          </div>
+          <p class="caveat" style="margin-top:18px">If 15 students were picked at random, the chance all 15 had zero absences is <span class="num" data-v="zeros.p_chance" data-f="sci"></span>.</p>
+        </div>
+        <div class="card s rise" data-s="3">
+          <div class="muted" style="font-size:19px">Cost of 10 absences (simple fit)</div>
+          <div style="display:flex;gap:34px;align-items:baseline;margin-top:8px">
+            <div><div class="big" style="font-size:64px;color:var(--data2)"><span data-v="simple10.all" data-f="+1"></span></div><div class="muted" style="font-size:17px">with the 15</div></div>
+            <div><div class="big acc" style="font-size:64px"><span data-v="simple10.nz" data-f="+1"></span></div><div class="muted" style="font-size:17px">without them</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="src">Portuguese course, n = 649. Chance computed with the exact hypergeometric probability (244 of 649 students have zero absences; the binomial approximation 0.376<sup>15</sup> gives 4.2 × 10<sup>−7</sup>).</span><span class="num">08</span></div>
+  <aside class="notes" data-speaker="Speaker 3" data-concept="Influential group of observations; the sign of a coefficient driven by a subgroup.">
+    <h5>Click 1: the dot lights up</h5>
+    <p class="say">"Look at the bottom-left corner. Fifteen students scored zero on the final. Every single one of them has zero recorded absences. Perfect attendance, zero grade."</p>
+    <h5>Click 2: how unusual</h5>
+    <p class="say">"Among everyone else, about a third have zero absences. Among the fifteen: all of them. If you picked fifteen students at random, the chance of that is about three in ten million."</p>
+    <h5>Click 3: refit</h5>
+    <p class="say">"Those fifteen sit exactly where they flatten the line. Take them out, and the cost of ten absences goes from 0.6 points to 1.4 points."</p>
+    <p>Pause. Let it land. This is the peak of the talk.</p>
+  </aside>
+</section>
+
+<!-- ======================================================= 9 WHO WERE THEY -->
+<section class="slide" id="s9" data-time="0:40" data-steps="1">
+  <div class="kicker"><b>Act 3</b><span class="rule"></span>Who were the fifteen?</div>
+  <h2 class="hl">They were fading before the final, so "zero absences" likely means <em>not recorded</em>, not perfect attendance</h2>
+  <div class="body">
+    <div class="grid2">
+      <div class="chart" data-chart="traj"></div>
+      <div class="col" style="justify-content:center">
+        <div style="display:flex;gap:36px">
+          <div><div class="big acc" style="font-size:72px"><span data-v="zeros.n_G2_zero" data-f="int"></span> of 15</div><div class="muted" style="font-size:18px;margin-top:6px">already had G2 = 0</div></div>
+          <div><div class="big" style="font-size:72px"><span data-v="zeros.n_G2_zero_others" data-f="int"></span></div><div class="muted" style="font-size:18px;margin-top:6px">other students with G2 = 0</div></div>
+        </div>
+        <div class="card s rise" data-s="1">
+          <div class="muted" style="font-size:19px;margin-bottom:10px">Cross-check: the same students' records in the maths file</div>
+          <p style="font-size:23px;line-height:1.45;color:var(--ink2)">Of <span class="num acc" data-v="overlap.mat_zero_pairs" data-f="int"></span> maths zero-grade students we can match one-to-one to their Portuguese record, <span class="num acc" data-v="overlap.mat_zero_pairs_por_abs_pos" data-f="int"></span> have absences recorded in Portuguese and <span class="num acc" data-v="overlap.mat_zero_pairs_por_pass" data-f="int"></span> passed it.</p>
+          <p class="caveat" style="margin-top:14px">The dataset never says why G3 = 0. Reading them as <b>apparent dropouts</b> whose absences stopped being recorded is our interpretation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="src">Lines: the 15 zero-grade students (mean G1 = <span data-v="zeros.G1" data-f="1"></span>, G2 = <span data-v="zeros.G2" data-f="1"></span>). Band: middle 80% of the other 634 students, with median. Records matched on the 13 attributes the UCI documentation lists; only pairs unique in both files are used.</span><span class="num">09</span></div>
+  <aside class="notes" data-speaker="Speaker 3" data-concept="Measurement error / data-generating process: a recording artifact, not a behaviour.">
+    <h5>Say</h5>
+    <p class="say">"Here are the fifteen, period by period. They were already sliding: average 7 in period one, under 4 in period two. Seven of them already had a zero in period two. No other student did."</p>
+    <h5>Click: the cross-check</h5>
+    <p class="say">"Many of these students are also in the maths file. Of the maths zero-grade students we can match to their Portuguese record, 22 of 31 have absences recorded in Portuguese, and 26 passed it. So zero absences doesn't mean they never missed class. It more likely means nothing was recorded once they stopped turning up."</p>
+    <p class="say">"To be clear: the data never says they dropped out. That's our reading of the pattern."</p>
+  </aside>
+</section>
+
+<!-- ======================================================= 10 THE FLIP -->
+<section class="slide" id="s10" data-time="0:50" data-steps="2">
+  <div class="kicker"><b>Act 3</b><span class="rule"></span>The verdict on absences</div>
+  <h2 class="hl">Set the zeros aside and the absence effect appears, and maths shows <em>the same flip</em></h2>
+  <div class="body">
+    <div class="grid2">
+      <div class="col">
+        <div class="chart" data-chart="dumbbell" style="flex:1"></div>
+        <div class="legend"><span><i style="background:var(--data2)"></i>All students</span><span><i style="background:var(--accent)"></i>Without the zero-grade cases</span><span class="muted" style="font-size:17px">Coefficient on log(absences + 1), HC3 95% CI</span></div>
+      </div>
+      <div class="col">
+        <div class="why s rise" data-s="1">
+          <h4>Why we report both, not just delete</h4>
+          Dropping G3 = 0 means <strong>conditioning on the outcome</strong>, so <span class="num" data-v="before_after.0.nz.b" data-f="+2"></span> describes students who <strong>completed the course</strong>. A zero-grade dummy (<span class="num" data-v="robust.dummy" data-f="+2"></span>) and keeping only G2 &gt; 0 (<span class="num" data-v="robust.g2pos" data-f="+2"></span>) point the same way.
+          <div class="concept">Influential observations · sample selection</div>
+        </div>
+        <div class="why s rise" data-s="2" style="border-left-color:var(--data2)">
+          <h4 style="color:var(--ink2)">Maths is not an independent replication</h4>
+          It's a second course with <strong>largely the same students</strong> (<span class="num" data-v="overlap.mat_rows_matched" data-f="int"></span> of 395 maths records match a Portuguese one). But its 38 zero-grade students are mostly different people: only <span class="num" data-v="overlap.both_zero" data-f="int"></span> score 0 in both.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="src">M3 = main controls model; M4 adds G1, G2. Maths: n = 395, 38 zero-grade students, all with 0 absences (vs <span data-v="maths.share0_all" data-f="%0"></span> of maths students). Breusch-Pagan on M3: p = <span data-v="diag.all.bp_p" data-f="sci"></span> with the zeros, <span data-v="diag.nz.bp_p" data-f="2"></span> without.</span><span class="num">10</span></div>
+  <aside class="notes" data-speaker="Speaker 3" data-concept="Robustness; conditioning on the outcome; heteroskedasticity caused by a subgroup.">
+    <h5>Say</h5>
+    <p class="say">"Grey is all students, amber is without the fifteen. In our main model the absence effect triples, from minus 0.15 to minus 0.45, strongly significant. The odd positive sign in M4 disappears."</p>
+    <p class="say">"The maths course shows the same thing, more dramatically: plus 0.98 becomes minus 0.55."</p>
+    <h5>Click 1: why both</h5>
+    <p class="say">"We don't just delete them. Dropping zero grades means selecting on the outcome, so minus 0.45 describes students who finished the course. A dummy for them gives minus 0.47, and keeping only students with a period-two grade gives minus 0.28. Same direction."</p>
+    <h5>Click 2: honesty on maths</h5>
+    <p class="say">"One caveat: maths isn't an independent sample. Most maths students are also in the Portuguese file. But its zero-grade students are mostly different people, so it's a consistency check, not proof."</p>
+    <p>Hand over to Speaker 4.</p>
+  </aside>
+</section>
+
+<!-- ======================================================= 11 A vs B -->
+<section class="slide" id="s11" data-time="0:50" data-steps="3">
+  <div class="kicker"><b>Your turn</b><span class="rule"></span>Student A or Student B?</div>
+  <h2 class="hl" style="display:grid"><span style="grid-area:1/1" data-hide="1">Hands up: which student does our model expect to score higher?</span><span class="s" data-s="1" style="grid-area:1/1">The model barely favours A, <em><span data-v="ab.A" data-f="1"></span> vs <span data-v="ab.B" data-f="1"></span></em>, and either could land anywhere from 7 to 18</span></h2>
+  <div class="body" style="display:flex;flex-direction:column;gap:24px">
+    <div class="ab">
+      <div class="abcard" data-vote="A"><h3>Student A <span class="votes" data-vc="A">click to count hands</span></h3>
+        <ul><li><b>Study time</b>over 10 h</li><li><b>Absences</b>12</li><li><b>Past failures</b>1</li><li><b>School support</b>none</li></ul></div>
+      <div class="abcard" data-vote="B"><h3>Student B <span class="votes" data-vc="B">click to count hands</span></h3>
+        <ul><li><b>Study time</b>2-5 h</li><li><b>Absences</b>2</li><li><b>Past failures</b>0</li><li><b>School support</b>yes</li></ul></div>
+    </div>
+    <div class="chart" data-chart="ab" style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <span class="s rise muted" data-s="2" style="font-size:20px;margin-right:6px">Why A leads:</span>
+      <span class="chip s rise" data-s="2" style="--d:.05s">more study <b class="num">&nbsp;<span data-v="ab.contrib.study" data-f="+2"></span></b></span>
+      <span class="chip s rise" data-s="2" style="--d:.15s">more absences <b class="num">&nbsp;<span data-v="ab.contrib.absences" data-f="+2"></span></b></span>
+      <span class="chip s rise" data-s="2" style="--d:.25s">one past failure <b class="num">&nbsp;<span data-v="ab.contrib.failures" data-f="+2"></span></b></span>
+      <span class="chip s rise" data-s="2" style="--d:.35s;border-color:var(--accent)">B's school-support dummy <b class="num acc">&nbsp;<span data-v="ab.contrib.support" data-f="+2"></span></b></span>
+      <span class="s rise num" data-s="2" style="--d:.45s;font-size:20px;color:var(--ink)">= A <span data-v="abgap" data-f="+2"></span></span>
+      <span class="chip s rise" data-s="3" style="margin-left:auto;background:var(--accentSoft);border-color:var(--accent);color:var(--accentInk);font-size:22px">Same support: B leads by <span class="num">&nbsp;<span data-v="ab.B_lead_equal_support" data-f="2"></span></span></span>
+    </div>
+  </div>
+  <div class="foot"><span class="src">M3 with study-time dummies, all 649 students. Everything else set to typical values (girl, 17, GP, urban, wants higher education, median family and social scores). Dot: predicted mean; line: 95% prediction interval for one student.</span><span class="num">11</span></div>
+  <aside class="notes" data-speaker="Speaker 4" data-concept="Prediction vs confidence intervals; dummy variables; selection bias in a regressor.">
+    <h5>Say</h5>
+    <p class="say">"A studies over ten hours but has 12 absences, a past failure and no extra support. B studies 2 to 5 hours, rarely misses class, no failures, and gets school support. Hands up for A... hands up for B."</p>
+    <p>Click a card once per raised hand (or just estimate). Then click.</p>
+    <h5>Click 1</h5>
+    <p class="say">"The model says A, barely: 12.6 versus 12.2. And look at the thin lines: either student could plausibly score anywhere from 7 to 18. A model predicts the average, not the person."</p>
+    <h5>Click 2</h5>
+    <p class="say">"Where does A's lead come from? Studying adds 0.7, the failure costs 1.4, and the biggest push is that B gets school support, which the model reads as minus 1.3. That's the selection effect from earlier."</p>
+    <h5>Click 3</h5>
+    <p class="say">"Give them the same support, and B leads by 0.93."</p>
+  </aside>
+</section>
+
+<!-- ======================================================= 12 DIAGNOSTICS -->
+<section class="slide" id="s12" data-time="0:35" data-steps="0">
+  <div class="kicker"><b>The audit</b><span class="rule"></span>Did we break any rules?</div>
+  <h2 class="hl">The main model mostly passes once the zeros are handled, and we report the one red flag openly</h2>
+  <div class="body">
+    <table class="score">
+      <tr class="s rise" data-s="0" style="--d:.05s"><td>Multicollinearity</td><td class="stat">max VIF = <span data-v="diag.nz.vif" data-f="2"></span> (weekend alcohol)</td><td><span class="pill pass">&#10003; pass</span></td><td class="act">No action needed</td></tr>
+      <tr class="s rise" data-s="0" style="--d:.15s"><td>Heteroskedasticity</td><td class="stat">Breusch-Pagan p = <span data-v="diag.all.bp_p" data-f="sci"></span> &rarr; <span data-v="diag.nz.bp_p" data-f="2"></span> without zeros; M4 still p = <span data-v="diag.nz.bp4_p" data-f="3"></span></td><td><span class="pill watch">! watch</span></td><td class="act">HC3 robust SEs everywhere</td></tr>
+      <tr class="s rise" data-s="0" style="--d:.25s"><td>Functional form of absences</td><td class="stat">skew = <span data-v="abs_skew" data-f="1"></span>; AIC: linear best with zeros, log best without (&Delta; <span data-v="aicgap" data-f="1"></span>); squared term never significant</td><td><span class="pill pass">&#10003; pass</span></td><td class="act">log(abs + 1) justified by the skew, not "concavity"</td></tr>
+      <tr class="s rise" data-s="0" style="--d:.35s"><td>Ramsey RESET</td><td class="stat">F = <span data-v="diag.nz.reset_F" data-f="1"></span>, p = <span data-v="diag.nz.reset_p" data-f="sci"></span></td><td><span class="pill flag">&#10005; flag</span></td><td class="act">Reported openly; the bounded 0-20 grade is a likely cause</td></tr>
+      <tr class="s rise" data-s="0" style="--d:.45s"><td>Influence (Cook's D)</td><td class="stat">max = <span data-v="diag.nz.cook_max" data-f="3"></span>; refit without the <span data-v="cook_refit.n_dropped" data-f="int"></span> points above 4/n: study <span data-v="cook_refit.studytime" data-f="+2"></span>, absences <span data-v="cook_refit.log_abs" data-f="+2"></span></td><td><span class="pill pass">&#10003; pass</span></td><td class="act">No single point drives a result</td></tr>
+      <tr class="s rise" data-s="0" style="--d:.55s"><td>Normality of residuals</td><td class="stat">Jarque-Bera p = <span data-v="diag.nz.jb_p" data-f="3"></span> (G3 &gt; 0)</td><td><span class="pill pass">&#10003; pass</span></td><td class="act">The left tail was the zero-grade cases</td></tr>
+      <tr class="s rise" data-s="0" style="--d:.65s"><td>Autocorrelation</td><td class="stat">Cross-sectional data, no time order</td><td><span class="pill na">&ndash; n/a</span></td><td class="act">Durbin-Watson would only reflect row order</td></tr>
+    </table>
+  </div>
+  <div class="foot"><span class="src">M3 on the 634 students with G3 &gt; 0 unless stated. Source: results/diagnostics_scorecard.csv, recomputed by build_story_deck_data.py.</span><span class="num">12</span></div>
+  <aside class="notes" data-speaker="Speaker 4" data-concept="VIF, Breusch-Pagan, HC3, functional form, RESET, Cook's distance, autocorrelation.">
+    <h5>Say</h5>
+    <p class="say">"Did we break the rules? VIF tops out at 2, so no multicollinearity problem."</p>
+    <p class="say">"Heteroskedasticity was real, and the fifteen zero-grade students caused most of it: Breusch-Pagan goes from p of ten to the minus ten to 0.24. The model with earlier grades still fails, so we use HC3 robust errors throughout."</p>
+    <p class="say">"We logged absences because they're heavily skewed. AIC doesn't strongly prefer the log, and all three forms give the same answer."</p>
+    <p class="say">"RESET rejects. We report that openly. A grade capped between 0 and 20 is a likely reason. Cook's distance: no single student drives anything. Autocorrelation doesn't apply to a cross-section."</p>
+  </aside>
+</section>
+
+<!-- ======================================================= 13 LIMITS -->
+<section class="slide" id="s13" data-time="0:25" data-steps="0">
+  <div class="kicker"><b>Fair warning</b><span class="rule"></span>What this case cannot prove</div>
+  <h2 class="hl">These are associations from two schools, and we chose the story after looking</h2>
+  <div class="body">
+    <div class="lim">
+      <div class="item s rise" data-s="0" style="--d:.05s"><h4>Not causal</h4><p>Study time is self-chosen, self-reported and coarse (4 levels). It is likely endogenous, and there's no instrument in the data.</p></div>
+      <div class="item s rise" data-s="0" style="--d:.12s"><h4>G1, G2 are bad controls</h4><p>They are partly outcomes of studying, so M4 understates effort. The R² of 0.86 is partly mechanical.</p></div>
+      <div class="item s rise" data-s="0" style="--d:.19s"><h4>The dropout reading is ours</h4><p>The data never say why G3 = 0. Without them, the absence effect describes students who completed the course.</p></div>
+      <div class="item s rise" data-s="0" style="--d:.26s"><h4>Maths is not independent</h4><p>A second course, mostly the same students. It is a consistency check, not a fresh sample.</p></div>
+      <div class="item s rise" data-s="0" style="--d:.33s"><h4>Forking paths</h4><p>The story was picked after pilot checks, and we ran about 50 tests without multiplicity correction. Results near p = 0.05 stay in backup, marked fragile.</p></div>
+      <div class="item s rise" data-s="0" style="--d:.40s"><h4>Narrow sample</h4><p>Two Portuguese secondary schools in 2005-06; only 35 students in the top study bracket.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span class="src">Backup slides (press B): maths overlap · full ladder and dummies · ANCOVA / MANCOVA · fragile interactions · conditioning on the outcome.</span><span class="num">13</span></div>
+  <aside class="notes" data-speaker="Speaker 4" data-concept="Internal vs external validity; endogeneity; multiple testing.">
+    <h5>Say</h5>
+    <p class="say">"Before the verdict, what we can't claim. These are associations. Study time is self-reported and probably endogenous. Earlier grades are bad controls. The dropout reading is our interpretation. Maths overlaps with the Portuguese students. And we picked this story after exploring, with many tests and no correction, so anything near 0.05 stays in the backup slides."</p>
+  </aside>
+</section>
+
+<!-- ======================================================= 14 VERDICT (END) -->
+<section class="slide" id="s14" data-time="0:30" data-steps="1">
+  <div class="kicker"><b>The verdict</b><span class="rule"></span>Case closed, for now</div>
+  <div class="verdict">
+    <div class="v s rise" data-s="0" style="--d:.1s"><div class="n"><span data-v="ladder.all.2.b" data-f="+2"></span></div><h3>Effort shows up, modestly</h3><p>Per study bracket after fair controls. Raw gap <span class="num" data-v="anova.tukey13" data-f="2"></span>; like with like <span class="num" data-v="suspects.1.all.b" data-f="2"></span> for two brackets.<span id="guessEcho2"></span></p></div>
+    <div class="v s rise" data-s="0" style="--d:.3s"><div class="n"><span data-v="suspects.6.all.b" data-f="+2"></span></div><h3>History weighs more</h3><p>Per past failure. Ambition adds <span class="num" data-v="suspects.0.all.b" data-f="+2"></span>; earlier grades carry most of the rest.</p></div>
+    <div class="v key s rise" data-s="0" style="--d:.5s"><div class="n acc">15 / 15</div><h3>Check your zeros</h3><p>Zero-grade students with "perfect attendance" hid the cost of missing class: <span class="num" data-v="before_after.0.all.b" data-f="+2"></span> &rarr; <span class="num acc" data-v="before_after.0.nz.b" data-f="+2"></span>.</p></div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:34px">
+    <p class="takeaway s rise" data-s="1" style="font-size:76px;max-width:1500px">Before you believe a regression,<br><em class="acc" style="font-style:normal">look at its zeros.</em></p>
+    <p class="s rise" data-s="1" style="--d:.5s;font-family:var(--serif);font-size:34px;color:var(--muted)">Thank you. Questions?</p>
+  </div>
+  <div class="foot"><span class="src">Data: Cortez, P. (2008). <i>Student Performance</i>. UCI ML Repository. doi.org/10.24432/C5TG7T (CC BY 4.0). Code: notebooks 00-06, results/, presentation/build_story_deck_data.py.</span><span class="num">14</span></div>
+  <aside class="notes" data-speaker="Speaker 4" data-concept="Peak-end: the last line is the one people repeat.">
+    <h5>Say</h5>
+    <p class="say">"So, the verdict. Effort shows up, modestly: about four-tenths of a point per bracket once we compare like with like. Your guess earlier was the raw gap. The fair gap is about a third of it."</p>
+    <p class="say">"History weighs more: a single past failure costs more than two extra study brackets gain."</p>
+    <h5>Click</h5>
+    <p class="say">"And the lesson we didn't expect: fifteen students with perfect attendance and a zero grade were hiding the cost of missing class. Before you believe a regression, look at its zeros. Thank you."</p>
+    <p>Stop. Smile. Wait for questions. Backups: press B.</p>
+  </aside>
+</section>
+
+<!-- ======================================================= BACKUPS -->
+<section class="slide" id="b1" data-backup="1" data-time="" data-steps="0">
+  <div class="kicker"><b>Backup B1</b><span class="rule"></span>Maths: second course, overlapping students<span class="backup-badge">BACKUP</span></div>
+  <h2 class="hl">Maths shares most of its students with Portuguese, but not its zero-grade cases</h2>
+  <div class="body">
+    <div class="grid2">
+      <div class="chart" data-chart="overlap"></div>
+      <div class="col" style="justify-content:center">
+        <table class="btable">
+          <tr><th>Maths file</th><th>Value</th></tr>
+          <tr><td>Rows matching a Portuguese record (13 attributes)</td><td><span data-v="overlap.mat_rows_matched" data-f="int"></span> of 395</td></tr>
+          <tr><td>Matched rows (UCI documentation says 382)</td><td><span data-v="overlap.merged_rows" data-f="int"></span></td></tr>
+          <tr><td>Pairs unique in both files</td><td><span data-v="overlap.unique_pairs" data-f="int"></span></td></tr>
+          <tr><td>Other shared attributes that agree in those pairs</td><td><span data-v="overlap.other_attr_agreement" data-f="%0"></span></td></tr>
+          <tr><td>Zero-grade students, all with 0 absences</td><td>38 (vs <span data-v="maths.share0_all" data-f="%1"></span> overall)</td></tr>
+          <tr><td>Zero in both courses</td><td><span data-v="overlap.both_zero" data-f="int"></span></td></tr>
+          <tr><td>Zero-grade at GP (GP is 349 of 395)</td><td><span data-v="maths.n_zero_gp" data-f="int"></span> of 38</td></tr>
+          <tr><td>log(abs+1) in M3: with &rarr; without</td><td><span data-v="before_after.2.all.b" data-f="+2"></span> &rarr; <span data-v="before_after.2.nz.b" data-f="+2"></span></td></tr>
+        </table>
+        <p class="caveat">The Portuguese school pattern (14 of 15 zeros at MS, Fisher OR = <span data-v="b3.fisher_or" data-f="1"></span>) does not replicate in maths, so the school is not the headline.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="src">Matched on school, sex, age, address, famsize, Pstatus, Medu, Fedu, Mjob, Fjob, reason, nursery, internet (data/raw). Some attribute combinations repeat, so exact counts depend on how duplicates are handled.</span><span class="num">B1</span></div>
+  <aside class="notes" data-concept="Independence of samples.">
+    <p class="say">"Most maths students are in the Portuguese file too, so we call maths a consistency check on overlapping students, not an independent replication. The zero-grade students, though, are mostly different people: only two score zero in both."</p>
+  </aside>
+</section>
+
+<section class="slide" id="b2" data-backup="1" data-time="" data-steps="0">
+  <div class="kicker"><b>Backup B2</b><span class="rule"></span>The full ladder<span class="backup-badge">BACKUP</span></div>
+  <h2 class="hl">The ladder keeps its shape with or without the zero-grade cases; dummy coding is the weak spot</h2>
+  <div class="body">
+    <table class="btable" id="ladderTable"></table>
+    <p class="caveat" style="margin-top:22px">With study time as three dummies, M3 is jointly significant on all students (Wald p = <span class="num" data-v="dummies_joint_p.all" data-f="3"></span>) but only borderline without the zero-grade cases (p = <span class="num" data-v="dummies_joint_p.nz" data-f="3"></span>), even though the linear term is significant there (p = <span class="num" data-v="ladder.nz.2.p" data-f="3"></span>). <span class="tag-fragile">fragile</span></p>
+  </div>
+  <div class="foot"><span class="src">OLS with HC3. Study time per bracket (1-4). M2 adds failures, log(abs+1), sex, age, school, address, higher; M3 adds Medu, Fedu, goout, Dalc, Walc, freetime, health, internet, schoolsup, famsup, paid, romantic; M4 adds G1, G2.</span><span class="num">B2</span></div>
+  <aside class="notes"><p class="say">"Linear coding assumes equal steps and borrows strength from that assumption. With dummies and without the zeros, the joint test is p = 0.063. So: study time still matters after controls, but the evidence is modest."</p></aside>
+</section>
+
+<section class="slide" id="b3" data-backup="1" data-time="" data-steps="0">
+  <div class="kicker"><b>Backup B3</b><span class="rule"></span>ANCOVA, MANOVA, MANCOVA<span class="backup-badge">BACKUP</span></div>
+  <h2 class="hl">Holding the first-period grade fixed, study time adds little (ANCOVA); across all three grades it still separates groups (MANOVA)</h2>
+  <div class="body">
+    <table class="btable">
+      <tr><th>Test</th><th>All (n = 649)</th><th>G3 &gt; 0 (n = 634)</th></tr>
+      <tr><td>ANCOVA G3 ~ C(study time) + G1: study time F</td><td><span data-v="ancova.all.F" data-f="2"></span>, p = <span data-v="ancova.all.p" data-f="3"></span></td><td><span data-v="ancova.nz.F" data-f="2"></span>, p = <span data-v="ancova.nz.p" data-f="3"></span></td></tr>
+      <tr><td>Partial η² for study time</td><td><span data-v="ancova.all.pe2" data-f="3"></span></td><td><span data-v="ancova.nz.pe2" data-f="3"></span></td></tr>
+      <tr><td>Homogeneity of slopes (study time &times; G1)</td><td>p = <span data-v="b3.slopes_all" data-f="2"></span></td><td>p = <span data-v="b3.slopes_nz" data-f="2"></span></td></tr>
+      <tr><td>MANOVA (G1, G2, G3) ~ study time, Pillai's trace</td><td><span data-v="anova.pillai" data-f="3"></span>, p <span data-v="anova.pillai_p" data-f="p"></span></td><td><span data-v="b3.pillai_nz" data-f="3"></span>, p <span data-v="b3.pillai_nz_p" data-f="p"></span></td></tr>
+      <tr><td>MANCOVA (+ failures), Pillai's trace</td><td><span data-v="anova.mancova_pillai" data-f="3"></span>, p <span data-v="anova.mancova_p" data-f="p"></span></td><td><span data-v="b3.mancova_nz" data-f="3"></span>, p <span data-v="b3.mancova_nz_p" data-f="p"></span></td></tr>
+      <tr><td>Correlation of G3 with G1 / G2</td><td><span data-v="corr.G1G3" data-f="2"></span> / <span data-v="corr.G2G3" data-f="2"></span></td><td></td></tr>
+    </table>
+    <p class="caveat" style="margin-top:22px">MANOVA treats the three grades as correlated outcomes; ANCOVA uses G1 as a covariate, which carries the same bad-control caveat as M4.</p>
+  </div>
+  <div class="foot"><span class="src">results/hypothesis_tests.csv; ANCOVA and MANOVA (all students) recomputed by build_story_deck_data.py.</span><span class="num">B3</span></div>
+  <aside class="notes"><p>Use if the professor asks about MANOVA/MANCOVA or ANCOVA assumptions. Slopes are homogeneous, so ANCOVA is appropriate.</p></aside>
+</section>
+
+<section class="slide" id="b4" data-backup="1" data-time="" data-steps="0">
+  <div class="kicker"><b>Backup B4</b><span class="rule"></span>Interactions<span class="backup-badge">BACKUP</span></div>
+  <h2 class="hl">Two interactions look significant only without the zero-grade cases, so we call them fragile</h2>
+  <div class="body">
+    <table class="btable">
+      <tr><th>Interaction</th><th>All (n = 649)</th><th>G3 &gt; 0 (n = 634)</th></tr>
+      <tr><td>Study time &times; past failures (M3 controls)</td><td><span data-v="fragile.all.int_b" data-f="+2"></span>, p = <span data-v="fragile.all.int_p" data-f="2"></span></td><td><span data-v="fragile.nz.int_b" data-f="+2"></span>, p = <span data-v="fragile.nz.int_p" data-f="3"></span> <span class="tag-fragile">fragile</span></td></tr>
+      <tr><td>Study time &times; sex (two-way ANOVA)</td><td>p = <span data-v="fragile.all.sex_int_p" data-f="3"></span></td><td>p = <span data-v="fragile.nz.sex_int_p" data-f="3"></span> <span class="tag-fragile">fragile</span></td></tr>
+    </table>
+    <p class="caveat" style="margin-top:22px">Both flip with a 15-student change in the sample, sit near 0.05, and come from an exploratory search with no multiplicity correction. Only <span data-v="n_boys_top" data-f="int"></span> boys are in the top study bracket.</p>
+  </div>
+  <div class="foot"><span class="src">results/regression_comparison.csv, results/hypothesis_tests.csv; recomputed by build_story_deck_data.py.</span><span class="num">B4</span></div>
+  <aside class="notes"><p class="say">"We saw these, but they depend on fifteen students and sit near 0.05 after many tests. We don't build the story on them."</p></aside>
+</section>
+
+<section class="slide" id="b5" data-backup="1" data-time="" data-steps="0">
+  <div class="kicker"><b>Backup B5</b><span class="rule"></span>Conditioning on the outcome<span class="backup-badge">BACKUP</span></div>
+  <h2 class="hl">However we treat the zero-grade cases, absences turn negative and the study effect holds</h2>
+  <div class="body">
+    <div class="grid2">
+      <table class="btable">
+        <tr><th>Treatment (M3)</th><th>n</th><th>log(abs+1)</th><th>Study time</th></tr>
+        <tr><td>Keep everyone</td><td>649</td><td><span data-v="before_after.0.all.b" data-f="+2"></span> (p = <span data-v="before_after.0.all.p" data-f="2"></span>)</td><td><span data-v="ladder.all.2.b" data-f="+2"></span></td></tr>
+        <tr><td>Drop G3 = 0</td><td>634</td><td><span data-v="before_after.0.nz.b" data-f="+2"></span> (p <span data-v="before_after.0.nz.p" data-f="p"></span>)</td><td><span data-v="ladder.nz.2.b" data-f="+2"></span></td></tr>
+        <tr><td>Zero-grade dummy</td><td>649</td><td><span data-v="robust.dummy" data-f="+2"></span> (p <span data-v="robust.dummy_p" data-f="p"></span>)</td><td><span data-v="robust.dummy_st" data-f="+2"></span></td></tr>
+        <tr><td>Keep only G2 &gt; 0</td><td><span data-v="robust.g2pos_n" data-f="int"></span></td><td><span data-v="robust.g2pos" data-f="+2"></span> (p = <span data-v="robust.g2pos_p" data-f="2"></span>)</td><td><span data-v="robust.g2pos_st" data-f="+2"></span></td></tr>
+        <tr><td colspan="4" style="padding-top:22px;font-family:var(--mono);font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Functional form of absences in M3 (AIC, lower is better)</td></tr>
+        <tr><td>All students: linear / log / quadratic</td><td></td><td colspan="2"><span data-v="aic.all.linear" data-f="1"></span> / <span data-v="aic.all.log" data-f="1"></span> / <span data-v="aic.all.quadratic" data-f="1"></span></td></tr>
+        <tr><td>G3 &gt; 0: linear / log / quadratic</td><td></td><td colspan="2"><span data-v="aic.nz.linear" data-f="1"></span> / <span data-v="aic.nz.log" data-f="1"></span> / <span data-v="aic.nz.quadratic" data-f="1"></span></td></tr>
+      </table>
+      <div class="why" style="align-self:start">
+        <h4>What dropping G3 = 0 means</h4>
+        Selecting on the outcome can bias coefficients. So we read <strong><span data-v="before_after.0.nz.b" data-f="+2"></span></strong> as the absence effect <strong>among students who completed the course</strong>, not for everyone. The dummy version keeps all 649 students and gives the same answer. The squared absence term is never significant (p = <span data-v="aic.all.sq_p" data-f="2"></span> / <span data-v="aic.nz.sq_p" data-f="2"></span>).
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="src">results/zero_grade_robustness.csv and regression_comparison.csv, recomputed by build_story_deck_data.py.</span><span class="num">B5</span></div>
+  <aside class="notes"><p>Use if asked "isn't dropping them cherry-picking?" Answer: we report both, the dummy keeps everyone, and we restrict the claim to course completers.</p></aside>
+</section>
+
+</div></div>
+
+<div id="progress"></div>
+<div id="counter"></div>
+<div id="hint">&larr; &rarr; navigate · N notes · O overview · F fullscreen · T theme · B backups</div>
+<div id="notes"><div class="n-body" id="nBody"></div><div class="n-side"><div class="clock" id="nClock">0:00</div><div id="nMeta"></div><div class="next" id="nNext"></div><div>Click the clock to reset</div></div></div>
+<div id="overview"></div>
+
+<script>
+const D=/*DATA-START*/{"meta":{"source":"Cortez (2008) UCI Student Performance, Portuguese course n = 649 unless stated","built_by":"presentation/build_story_deck_data.py"},"card":{"n_por":649,"n_mat":395,"n_vars":33,"n_gp":423,"n_ms":226,"g3_mean":11.906009,"g3_sd":3.230656},"hist":{"0":15,"1":1,"5":1,"6":3,"7":10,"8":35,"9":35,"10":97,"11":104,"12":72,"13":82,"14":63,"15":49,"16":36,"17":29,"18":15,"19":2},"gradient":[{"level":1,"label":"<2 h","n":212,"mean":10.84434,"lo":10.408578,"hi":11.280101},{"level":2,"label":"2-5 h","n":305,"mean":12.091803,"lo":11.726382,"hi":12.457225},{"level":3,"label":"5-10 h","n":97,"mean":13.226804,"lo":12.722519,"hi":13.73109},{"level":4,"label":">10 h","n":35,"mean":13.057143,"lo":12.013413,"hi":14.100873}],"anova":{"F":15.876268,"p":5.705728458963127e-10,"eta2":0.068765,"levene_p":0.380358,"kw_H":50.316208,"kw_p":6.841570528918373e-11,"tukey13":2.3825,"tukey13_lo":1.3958,"tukey13_hi":3.3691,"tukey34":-0.1697,"tukey34_p":0.9927,"pillai":0.084645,"pillai_p":9.861212021886535e-09,"mancova_pillai":0.065255,"mancova_p":2.590344702417275e-06},"who":[{"level":1,"female":0.419811,"failures":0.334906,"higher":0.792453,"walc":2.679245},{"level":2,"female":0.64918,"failures":0.2,"higher":0.937705,"walc":2.177049},{"level":3,"female":0.773196,"failures":0.103093,"higher":0.958763,"walc":1.845361},{"level":4,"female":0.6,"failures":0.057143,"higher":0.942857,"walc":1.971429}],"ladder":{"all":[{"model":"M1","b":0.972842,"lo":0.690807,"hi":1.254876,"p":1.3738165771702807e-11,"r2":0.062394,"n":649},{"model":"M2","b":0.446741,"lo":0.19547,"hi":0.698011,"p":0.0004927372014604405,"r2":0.286749,"n":649},{"model":"M3","b":0.415472,"lo":0.16724,"hi":0.663704,"p":0.0010364684688421524,"r2":0.337721,"n":649},{"model":"M4","b":0.05338,"lo":-0.049044,"hi":0.155804,"p":0.30703085532235475,"r2":0.856432,"n":649}],"nz":[{"model":"M1","b":0.795151,"lo":0.541548,"hi":1.048755,"p":7.981723482177714e-10,"r2":0.060494,"n":634},{"model":"M2","b":0.334131,"lo":0.100548,"hi":0.567715,"p":0.005052880327797972,"r2":0.301758,"n":634},{"model":"M3","b":0.310363,"lo":0.078222,"hi":0.542503,"p":0.008782828218242798,"r2":0.368689,"n":634},{"model":"M4","b":0.014274,"lo":-0.072452,"hi":0.101001,"p":0.7470022591903938,"r2":0.888276,"n":634}]},"dummies_joint_p":{"all":0.004791,"nz":0.062573},"ancova":{"all":{"F":2.111931,"p":0.097477,"pe2":0.009742},"nz":{"F":2.976611,"p":0.031013,"pe2":0.013998}},"b3":{"slopes_all":0.492321,"slopes_nz":0.451113,"pillai_nz":0.081589,"pillai_nz_p":4.1262478402207046e-08,"mancova_nz":0.065052,"mancova_nz_p":4.150754291906463e-06,"fisher_or":27.867925},"corr":{"G1G3":0.826387,"G2G3":0.918548},"suspects":[{"label":"Wants higher education","all":{"b":1.806976,"lo":1.044225,"hi":2.569727,"p":3.430528181789433e-06},"nz":{"b":1.728785,"lo":1.171598,"hi":2.285971,"p":1.1929601426881705e-09}},{"label":"Study time: <2 h to 5-10 h","all":{"b":0.830944,"lo":0.334479,"hi":1.327409,"p":0.0010364684688421524},"nz":{"b":0.620725,"lo":0.156444,"hi":1.085006,"p":0.008782828218242798}},{"label":"Family support","all":{"b":0.030805,"lo":-0.421518,"hi":0.483128,"p":0.8938128870817087},"nz":{"b":-0.220693,"lo":-0.594055,"hi":0.152668,"p":0.2466470866136865}},{"label":"Absences: 0 to 10","all":{"b":-0.35824,"lo":-0.944603,"hi":0.228122,"p":0.23113208707470756},"nz":{"b":-1.074658,"lo":-1.564169,"hi":-0.585148,"p":1.686133589576212e-05}},{"label":"School MS (vs GP)","all":{"b":-1.310918,"lo":-1.865784,"hi":-0.756052,"p":3.646411058011466e-06},"nz":{"b":-0.87274,"lo":-1.332582,"hi":-0.412898,"p":0.00019934875433520703}},{"label":"Extra school support","all":{"b":-1.3255,"lo":-2.02883,"hi":-0.622169,"p":0.00022096696107327498},"nz":{"b":-1.164531,"lo":-1.685541,"hi":-0.643521,"p":1.182457361960321e-05}},{"label":"One past failure","all":{"b":-1.420899,"lo":-1.837788,"hi":-1.00401,"p":2.3857862829803653e-11},"nz":{"b":-1.232733,"lo":-1.55226,"hi":-0.913205,"p":3.984038790959001e-14}}],"higher_raw":{"diff":3.478761,"d":1.140738,"n_no":69},"zeros_p_binom":4.238156045816184e-07,"zeros":{"n":15,"n_zero_abs":15,"share0_all":0.375963,"share0_rest":0.361199,"n0_rest":229,"p_chance":3.2156183678267387e-07,"G1":7.066667,"G2":3.8,"n_G2_zero":7,"n_G2_zero_others":0,"n_ms":14},"traj":{"zero":[[11,9,0],[7,0,0],[8,7,0],[7,0,0],[4,0,0],[8,6,0],[8,8,0],[9,0,0],[5,0,0],[5,0,0],[8,0,0],[7,5,0],[7,7,0],[5,8,0],[7,7,0]],"rest_median":[11.0,12.0,12.0],"rest_q10":[8.0,9.0,9.0],"rest_q90":[15.0,15.0,16.0]},"scatter":[[0,0,15],[0,1,1],[0,7,2],[0,8,6],[0,9,10],[0,10,30],[0,11,29],[0,12,26],[0,13,39],[0,14,24],[0,15,19],[0,16,18],[0,17,13],[0,18,11],[0,19,1],[1,10,2],[1,11,3],[1,12,1],[1,13,2],[1,14,3],[1,16,1],[2,6,1],[2,7,2],[2,8,6],[2,9,7],[2,10,13],[2,11,16],[2,12,18],[2,13,15],[2,14,11],[2,15,8],[2,16,4],[2,17,7],[2,18,2],[3,7,1],[3,8,2],[3,10,2],[3,13,1],[3,17,1],[4,6,1],[4,8,4],[4,9,6],[4,10,15],[4,11,22],[4,12,8],[4,13,11],[4,14,9],[4,15,9],[4,16,5],[4,17,2],[4,19,1],[5,8,1],[5,9,1],[5,10,2],[5,11,3],[5,12,1],[5,13,1],[5,14,1],[5,15,1],[5,17,1],[6,8,3],[6,9,3],[6,10,7],[6,11,9],[6,12,5],[6,13,10],[6,14,4],[6,15,3],[6,16,2],[6,17,3],[7,8,1],[7,15,1],[7,16,1],[8,7,2],[8,8,2],[8,9,5],[8,10,6],[8,11,8],[8,12,6],[8,13,1],[8,14,3],[8,15,6],[8,16,3],[9,7,1],[9,8,2],[9,10,3],[9,15,1],[10,8,2],[10,9,1],[10,10,4],[10,11,6],[10,14,3],[10,15,1],[10,16,1],[10,17,1],[10,18,2],[11,10,1],[11,11,2],[11,12,2],[12,5,1],[12,7,1],[12,8,1],[12,9,1],[12,10,3],[12,11,2],[12,12,1],[12,14,2],[13,14,1],[14,7,1],[14,8,2],[14,10,1],[14,11,3],[14,17,1],[15,10,1],[15,12,1],[16,8,2],[16,10,4],[16,11,1],[16,12,3],[18,10,1],[18,13,1],[18,14,1],[21,10,1],[21,13,1],[22,6,1],[22,10,1],[24,9,1],[26,8,1],[30,16,1],[32,14,1]],"simple_fit":{"all":{"a":12.173537,"b":-0.245751,"p":0.0778703274116463},"nz":{"a":12.849604,"b":-0.593975,"p":1.0427231637364164e-07}},"pearson":{"all":{"r":-0.091379,"p":0.01989562393916078},"nz":{"r":-0.196031,"p":6.539929820925294e-07}},"before_after":[{"course":"Portuguese","model":"M3","all":{"b":-0.149398,"lo":-0.39393,"hi":0.095134,"p":0.23113208707470756},"nz":{"b":-0.448167,"lo":-0.652309,"hi":-0.244026,"p":1.686133589576212e-05}},{"course":"Portuguese","model":"M4","all":{"b":0.158513,"lo":0.022482,"hi":0.294545,"p":0.02237813698245186},"nz":{"b":-0.007684,"lo":-0.108577,"hi":0.093209,"p":0.8813367945866317}},{"course":"Maths","model":"M3","all":{"b":0.984545,"lo":0.502973,"hi":1.466116,"p":6.148742251645099e-05},"nz":{"b":-0.549038,"lo":-0.880535,"hi":-0.217541,"p":0.0011697040245616055}},{"course":"Maths","model":"M4","all":{"b":0.634738,"lo":0.391672,"hi":0.877804,"p":3.084454528194683e-07},"nz":{"b":-0.051954,"lo":-0.150835,"hi":0.046927,"p":0.3030994562000181}}],"robust":{"dummy":-0.465213,"dummy_p":7.6183896660797e-06,"dummy_st":0.314606,"g2pos":-0.279633,"g2pos_p":0.018719065132067055,"g2pos_n":642,"g2pos_st":0.396051},"maths":{"n":395,"n_zero":38,"n_zero_abs0":38,"share0_all":0.291139,"n_zero_gp":34,"n_gp":349},"overlap":{"merged_rows":382,"mat_rows_matched":370,"mat_share":0.936709,"unique_pairs":358,"other_attr_agreement":1.0,"mat_zero_pairs":31,"mat_zero_pairs_por_zero":2,"mat_zero_pairs_por_abs_pos":22,"mat_zero_pairs_por_pass":26,"mat_zero_pairs_por_G3":11.096774,"por_rows_matched":374,"mat_zero_any_match":35,"por_zero_any_match":5,"both_zero":2},"ab":{"A":12.59876,"B":12.224129,"A_pi":[7.249849,17.947671],"B_pi":[6.924573,17.523684],"schoolsup":-1.303433,"B_lead_equal_support":0.928802,"contrib":{"study":0.702844,"absences":-0.213156,"failures":-1.418491,"support":1.303433}},"diag":{"all":{"vif":1.970667,"bp_lm":86.11643,"bp_p":3.5115176810370954e-10,"bp4_p":0.00011849964162817508,"reset_F":13.644989,"reset_p":0.0002401074942139316,"cook_max":0.049207,"cook_n":37,"jb_p":7.090083144527374e-86},"nz":{"vif":1.989036,"bp_lm":24.156374,"bp_p":0.23562813669514435,"bp4_p":0.011833436331267577,"reset_F":17.711115,"reset_p":2.9567080323501715e-05,"cook_max":0.036836,"cook_n":35,"jb_p":0.05394866813492893}},"cook_refit":{"n_dropped":35,"studytime":0.381976,"studytime_p":0.00018609333855908463,"log_abs":-0.43326,"log_abs_p":1.4157256557199937e-06},"aic":{"all":{"linear":3136.178402,"log":3137.494494,"quadratic":3138.16349,"sq_p":0.92297},"nz":{"linear":2808.985453,"log":2804.198515,"quadratic":2806.492589,"sq_p":0.10339}},"abs_skew":2.01602,"fragile":{"all":{"int_b":-0.217586,"int_p":0.461402,"sex_int_p":0.08323},"nz":{"int_b":-0.534644,"int_p":0.015216,"sex_int_p":0.024838}},"n_boys_top":14}/*DATA-END*/;
+</script>
+<script>
+(function(){
+"use strict";
+/* ------------------------------------------------------------ derived values */
+D.simple10={all:D.simple_fit.all.b*Math.log(11), nz:D.simple_fit.nz.b*Math.log(11)};
+D.aicgap=D.aic.nz.linear-D.aic.nz.log;
+D.abgap=D.ab.A-D.ab.B;
+
+/* ------------------------------------------------------------ formatting */
+const SUP={"-":"⁻","0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹"};
+const minus=s=>String(s).replace(/^-/,"−");
+function get(path){return path.split(".").reduce((o,k)=>o==null?o:o[k],D);}
+function fmt(v,f){
+  if(v==null||isNaN(v))return "?";
+  if(f==="int")return Math.round(v).toLocaleString("en-US");
+  if(f[0]==="+"){const k=+f.slice(1);const s=Math.abs(v).toFixed(k);return (+s===0?"":v>=0?"+":"−")+s;}
+  if(f[0]==="%")return (v*100).toFixed(+f.slice(1))+"%";
+  if(f==="sci"){const e=Math.floor(Math.log10(Math.abs(v)));const m=v/Math.pow(10,e);
+    if(e>=-2)return v.toFixed(e>=-1?2:3);
+    return m.toFixed(1)+" × 10"+String(e).split("").map(c=>SUP[c]).join("");}
+  if(f==="p"){return v<0.001?"< 0.001":"= "+v.toFixed(v<0.01?3:2);}
+  return minus((+v).toFixed(+f));
+}
+function put(el,s){if(el.closest(".big,.hl,.verdict .n")&&/^[+\u2212]/.test(s))el.innerHTML='<span class="sg">'+s[0]+'</span>'+s.slice(1);else el.textContent=s;}
+document.querySelectorAll("[data-v]").forEach(e=>{const v=get(e.dataset.v);put(e,fmt(v,e.dataset.f||"2"));e.dataset.final=v;});
+document.querySelectorAll("[data-w]").forEach(e=>{e.style.width=(get(e.dataset.w)*100)+"%";});
+
+/* ------------------------------------------------------------ svg helpers */
+const NS="http://www.w3.org/2000/svg";
+function E(tag,a,p){const e=document.createElementNS(NS,tag);for(const k in a){if(a[k]!=null)e.setAttribute(k,a[k]);}if(p)p.appendChild(e);return e;}
+function T(p,x,y,s,a){const t=E("text",Object.assign({x,y},a||{}),p);t.textContent=s;return t;}
+function sc(d0,d1,r0,r1){const f=v=>r0+(v-d0)/(d1-d0)*(r1-r0);return f;}
+function tip(e,s){const t=E("title",{},e);t.textContent=s;return e;}
+function S(cls,step,d){return {class:cls+" s","data-s":step,style:d!=null?"--d:"+d+"s":null};}
+function mk(name,w,h){const host=document.querySelector('[data-chart="'+name+'"]');if(!host)return null;
+  const svg=E("svg",{viewBox:"0 0 "+w+" "+h,preserveAspectRatio:"xMidYMid meet",role:"img"},host);return svg;}
+const css=v=>"var(--"+v+")";
+
+/* ---- S1: the 0-20 scale with the class mean and 1 SD band (context, not the answer) */
+(function(){const w=1680,h=210,svg=mk("ruler",w,h);const x=sc(0,20,20,w-20);
+  const m=D.card.g3_mean,sd=D.card.g3_sd;
+  const band=E("g",S("",0,.2),svg);
+  E("rect",{x:x(m-sd),y:96,width:x(m+sd)-x(m-sd),height:48,rx:6,fill:css("dataSoft")},band);
+  T(band,(x(m-sd)+x(m+sd))/2,84,"1 SD either side of the mean: "+(m-sd).toFixed(1)+" to "+(m+sd).toFixed(1),{"text-anchor":"middle","font-size":19,class:"t-m"});
+  E("line",{x1:x(0),x2:x(20),y1:120,y2:120,stroke:css("line"),"stroke-width":2},svg);
+  for(let g=0;g<=20;g++){E("line",{x1:x(g),x2:x(g),y1:120,y2:g%5?132:142,stroke:css("line"),"stroke-width":g%5?1:2},svg);
+    if(g%5===0)T(svg,x(g),176,g,{"text-anchor":"middle","font-size":22,class:"t-m mono"});}
+  const mk_=E("g",S("",0,.4),svg);
+  E("circle",{cx:x(m),cy:120,r:9,fill:css("bg"),stroke:css("ink2"),"stroke-width":2.5},mk_);
+  T(mk_,x(m),40,"class average "+m.toFixed(1),{"text-anchor":"middle","font-size":22,class:"t-i"});
+  E("line",{x1:x(m),x2:x(m),y1:50,y2:110,stroke:css("ink2"),"stroke-width":1.5,"stroke-dasharray":"3 5"},mk_);
+  T(svg,w-20,208,"final grade G3, out of 20",{"text-anchor":"end","font-size":18,class:"t-m"});
+})();
+
+/* ---- S2: case file */
+(function(){const w=1680,h=640,svg=mk("casefile",w,h);if(!svg)return;
+  // left: grade path
+  const g=E("g",{},svg);
+  const steps=[["G1","period 1"],["G2","period 2"],["G3","final grade"]];
+  steps.forEach((s,i)=>{const cx=70+i*200,G=E("g",S("",0,.1+i*.15),g);
+    E("circle",{cx,cy:120,r:52,fill:i===2?css("accentSoft"):css("surface"),stroke:i===2?css("accent"):css("line"),"stroke-width":2},G);
+    T(G,cx,132,s[0],{"text-anchor":"middle","font-size":34,class:i===2?"t-a":"t-i",style:"font-family:var(--serif)"});
+    T(G,cx,210,s[1],{"text-anchor":"middle","font-size":20,class:"t-m"});
+    if(i<2)E("path",{d:"M"+(cx+60)+" 120 L"+(cx+140)+" 120",stroke:css("data2"),"stroke-width":2,"marker-end":"url(#arr)"},G);});
+  const defs=E("defs",{},svg);const m=E("marker",{id:"arr",viewBox:"0 0 10 10",refX:9,refY:5,markerWidth:8,markerHeight:8,orient:"auto"},defs);
+  E("path",{d:"M0 0 L10 5 L0 10 z",fill:css("data2")},m);
+  T(g,18,280,"each out of 20 · Portuguese-language course",{"font-size":20,class:"t-m"});
+  // middle: study brackets as horizontal bars
+  const gb=E("g",S("",0,.55),svg);const bx=0,by=350;const xb=sc(0,320,150,560);
+  T(gb,bx,by-26,"Self-reported weekly study time",{"font-size":22,class:"t-i","font-weight":600});
+  D.gradient.forEach((r,i)=>{const yy=by+i*44;
+    T(gb,bx,yy+22,r.label,{"font-size":20,class:"t-i"});
+    E("rect",Object.assign({x:xb(0),y:yy+4,width:xb(r.n)-xb(0),height:26,rx:4,fill:css("data2")},S("growx",0,.6+i*.08)),gb);
+    T(gb,xb(r.n)+12,yy+24,String(r.n),{"font-size":18,class:"t-m mono"});});
+  T(gb,bx,by+218,"Four ticked boxes, not hours.",{"font-size":22,class:"t-a"});
+  // right: facts
+  const facts=[[D.card.n_por,"students in the Portuguese course"],["2","schools: GP ("+D.card.n_gp+") and MS ("+D.card.n_ms+")"],["33","variables: family, social, school"],[D.card.n_mat,"students in a second file, maths"]];
+  const gf=E("g",{},svg);
+  facts.forEach((f,i)=>{const G=E("g",S("",0,.7+i*.12),gf);const y=60+i*130;
+    T(G,760,y+44,f[0],{"font-size":70,class:"t-i",style:"font-family:var(--serif);letter-spacing:-.02em"});
+    T(G,980,y+34,f[1],{"font-size":25,class:"t-m"});
+    E("line",{x1:760,x2:1680,y1:y+82,y2:y+82,stroke:css("grid")},G);});
+  const warn=E("g",S("",0,1.3),svg);
+  E("rect",{x:760,y:560,width:920,height:68,rx:34,fill:"none",stroke:css("accent"),"stroke-width":1.5},warn);
+  T(warn,1220,603,"Observational: nobody was assigned to study. Associations only.",{"text-anchor":"middle","font-size":23,class:"t-i"});
+})();
+
+/* ---- S3: gradient dot + CI */
+(function(){const w=1100,h=560,svg=mk("gradient",w,h);const L=90,R=w-30,Tp=44,B=h-70;
+  const x=i=>L+(i+.5)*(R-L)/4, y=sc(9,15,B,Tp);
+  for(let v=9;v<=15;v++){E("line",{x1:L,x2:R,y1:y(v),y2:y(v),stroke:css("grid")},svg);T(svg,L-18,y(v)+7,v,{"text-anchor":"end","font-size":20,class:"t-m mono"});}
+  T(svg,L-70,Tp-22,"Mean final grade (95% CI)",{"font-size":19,class:"t-m"});
+  D.gradient.forEach((r,i)=>{const key=i===0||i===2;const G=E("g",{},svg);
+    E("line",S("grow",0,.15*i),G).setAttribute("x1",x(i));
+    const ci=G.lastChild;ci.setAttribute("x2",x(i));ci.setAttribute("y1",y(r.hi));ci.setAttribute("y2",y(r.lo));ci.setAttribute("stroke",key?css("ink2"):css("data2"));ci.setAttribute("stroke-width",3);ci.setAttribute("stroke-linecap","round");
+    const c=E("circle",Object.assign({cx:x(i),cy:y(r.mean),r:13,fill:key?css("accent"):css("data2"),stroke:css("bg"),"stroke-width":3},S("pop",0,.2+.15*i)),G);
+    tip(c,r.label+": mean "+r.mean.toFixed(2)+", 95% CI "+r.lo.toFixed(2)+"-"+r.hi.toFixed(2)+", n = "+r.n);
+    if(i===2)T(G,x(i)-24,y(r.mean)+8,r.mean.toFixed(2),{"text-anchor":"end","font-size":23,class:"t-a mono"});
+    else T(G,x(i)+24,y(r.mean)+8,r.mean.toFixed(2),{"font-size":23,class:key?"t-a mono":"t-i mono"});
+    T(svg,x(i),B+38,r.label,{"text-anchor":"middle","font-size":23,class:"t-i"});
+    T(svg,x(i),B+62,"n = "+r.n,{"text-anchor":"middle","font-size":16,class:"t-m mono"});});
+  // bracket 1 -> 3
+  const br=E("g",S("",0,.9),svg);const yb=y(D.gradient[2].hi)-34;
+  E("path",{d:`M${x(0)} ${y(D.gradient[0].hi)-14} V${yb} H${x(2)} V${y(D.gradient[2].hi)-14}`,fill:"none",stroke:css("accent"),"stroke-width":2},br);
+  T(br,(x(0)+x(2))/2,yb-12,fmt(D.anova.tukey13,"+2")+" points",{"text-anchor":"middle","font-size":24,class:"t-a",style:"font-family:var(--serif)"});
+  // plateau
+  const pl=E("g",S("",1),svg);
+  E("path",{d:`M${x(2)} ${y(D.gradient[2].mean)} L${x(3)} ${y(D.gradient[3].mean)}`,stroke:css("ink2"),"stroke-width":2,"stroke-dasharray":"5 6"},pl);
+  T(pl,x(3),y(D.gradient[3].lo)+38,"plateau: "+fmt(D.anova.tukey34,"+2")+", p = "+D.anova.tukey34_p.toFixed(2),{"text-anchor":"middle","font-size":20,class:"t-i"});
+})();
+
+/* ---- S4: who studies (3 small multiples) */
+(function(){const w=1100,h=600,svg=mk("who",w,h);const rows=[["Girls","female","%"],["Mean past failures","failures","n"],["Want higher education","higher","%"]];
+  const colW=w/3;
+  rows.forEach((r,ri)=>{const ox=ri*colW+10,top=80,bot=h-80,bw=(colW-80)/4;
+    T(svg,ox,30,r[0],{"font-size":24,class:"t-i","font-weight":600});
+    const max=r[2]==="%"?1:0.4;const y=sc(0,max,bot,top);
+    E("line",{x1:ox,x2:ox+colW-50,y1:bot,y2:bot,stroke:css("line")},svg);
+    D.who.forEach((d,i)=>{const v=d[r[1]],bx=ox+i*bw+6;const key=i===0||i===2;
+      const b=E("rect",Object.assign({x:bx,y:y(v),width:bw-14,height:bot-y(v),rx:4,fill:css("data2")},S("grow",0,.1+ri*.25+i*.06)),svg);
+      tip(b,D.gradient[i].label+": "+(r[2]==="%"?(v*100).toFixed(0)+"%":v.toFixed(2)));
+      T(svg,bx+(bw-14)/2,y(v)-12,r[2]==="%"?Math.round(v*100)+"%":v.toFixed(2),{"text-anchor":"middle","font-size":20,class:"t-i mono"});
+      T(svg,bx+(bw-14)/2,bot+30,D.gradient[i].label,{"text-anchor":"middle","font-size":17,class:"t-m"});});
+  });
+  T(svg,10,h-12,"Study-time bracket",{"font-size":17,class:"t-m"});
+})();
+
+/* ---- S5: ladder */
+const LAD={models:["M1","M2","M3","M4"],labs:["Study time only","+ failures, absences, sex, age, school, address, ambition","+ 12 family & social variables","+ earlier grades G1, G2"]};
+(function(){const w=1100,h=600,svg=mk("ladder",w,h);const L=80,R=w-20,Tp=40,B=h-150;const y=sc(-0.1,1.3,B,Tp);const bw=(R-L)/4;
+  [0,.25,.5,.75,1,1.25].forEach(v=>{E("line",{x1:L,x2:R,y1:y(v),y2:y(v),stroke:css("grid")},svg);T(svg,L-14,y(v)+6,v.toFixed(2),{"text-anchor":"end","font-size":18,class:"t-m mono"});});
+  E("line",{x1:L,x2:R,y1:y(0),y2:y(0),stroke:css("line"),"stroke-width":2},svg);
+  T(svg,L-70,Tp-14,"Points per study bracket",{"font-size":18,class:"t-m"});
+  const m1=D.ladder.all[0].b;
+  D.ladder.all.forEach((r,i)=>{const cx=L+i*bw+bw/2,x0=cx-bw*.3,ww=bw*.6;
+    // ghost of M1 for later rungs
+    if(i>0)E("rect",Object.assign({x:x0,y:y(m1),width:ww,height:y(0)-y(m1),rx:4,fill:"none",stroke:css("data"),"stroke-dasharray":"6 6","stroke-width":1.5},S("",i)),svg);
+    const bar=E("rect",Object.assign({x:x0,y:y(Math.max(r.b,0)),width:ww,height:Math.max(y(0)-y(r.b),2),rx:4,fill:i===3?css("accent"):css("data"),id:"lbar"+i},S("grow",i,.05)),svg);
+    tip(bar,r.model+": "+fmt(r.b,"+3")+" [95% CI "+fmt(r.lo,"+2")+", "+fmt(r.hi,"+2")+"], R² = "+r.r2.toFixed(2));
+    const ci=E("line",Object.assign({x1:cx,x2:cx,y1:y(r.hi),y2:y(r.lo),stroke:css("ink"),"stroke-width":2.5,"stroke-linecap":"round"},S("",i,.7)),svg);
+    T(svg,cx,B+44,r.model,{"text-anchor":"middle","font-size":26,class:"t-i",style:"font-family:var(--serif)"});
+    // R2 meter
+    const G=E("g",S("",i,.4),svg);
+    E("rect",{x:x0,y:B+60,width:ww,height:10,rx:5,fill:css("surface2")},G);
+    E("rect",Object.assign({x:x0,y:B+60,width:ww*r.r2,height:10,rx:5,fill:css("data2")},S("growx",i,.6)),G);
+    T(G,cx,B+100,"R² "+r.r2.toFixed(2),{"text-anchor":"middle","font-size":18,class:"t-m mono"});
+  });
+  // label of what each rung adds, below
+  const lab=T(svg,L,h-12,"",{"font-size":19,class:"t-m",id:"ladAdd"});
+})();
+const ladHook=(sl,step,prev)=>{step=Math.min(step,3);if(prev!=null)prev=Math.min(prev,3);const r=D.ladder.all[step];
+  // earlier bars fade to neutral, current is accent
+  for(let i=0;i<4;i++){const b=document.getElementById("lbar"+i);if(b)b.setAttribute("fill",i===step?css("accent"):css("data"));}
+  document.getElementById("ladLab").textContent=r.model+" · "+LAD.labs[step];
+  document.getElementById("ladSub").textContent="p "+fmt(r.p,"p")+" · R² = "+r.r2.toFixed(2);
+  const a=document.getElementById("ladAdd");if(a)a.textContent="";
+  countTo(document.getElementById("ladNum"),prev==null?r.b:D.ladder.all[Math.max(0,Math.min(3,prev))].b,r.b,"+2");};
+
+/* ---- S6: forest */
+(function(){const w=1100,h=640,svg=mk("forest",w,h);const L=360,R=w-120,Tp=30,rows=D.suspects.slice().sort((a,b)=>b.all.b-a.all.b);
+  const x=sc(-2.2,2.8,L,R),rh=(h-Tp-60)/rows.length;
+  for(let v=-2;v<=2.5;v+=1){E("line",{x1:x(v),x2:x(v),y1:Tp-10,y2:h-50,stroke:v===0?css("line"):css("grid"),"stroke-width":v===0?2:1},svg);
+    T(svg,x(v),h-20,(v>0?"+":v<0?"−":"")+Math.abs(v),{"text-anchor":"middle","font-size":18,class:"t-m mono"});}
+  T(svg,R+110,h-20,"grade points",{"text-anchor":"end","font-size":16,class:"t-m"});
+  rows.forEach((r,i)=>{const cy=Tp+i*rh+rh/2,key=/higher|failure/.test(r.label),sig=r.all.p<0.05;
+    T(svg,L-24,cy+7,r.label,{"text-anchor":"end","font-size":22,class:key?"t-i":"t-m","font-weight":key?600:400});
+    const G=E("g",S("",0,.1+i*.08),svg);
+    E("line",{x1:x(r.all.lo),x2:x(r.all.hi),y1:cy,y2:cy,stroke:key?css("accent"):css("data2"),"stroke-width":3,"stroke-linecap":"round"},G);
+    tip(E("circle",{cx:x(r.all.b),cy,r:11,fill:sig?(key?css("accent"):css("data2")):css("bg"),stroke:key?css("accent"):css("data2"),"stroke-width":3},G),
+      r.label+": "+fmt(r.all.b,"+2")+" [95% CI "+fmt(r.all.lo,"+2")+", "+fmt(r.all.hi,"+2")+"], p = "+r.all.p.toPrecision(2));
+    T(G,R+110,cy+7,fmt(r.all.b,"+2"),{"text-anchor":"end","font-size":22,class:key?"t-a mono":"t-i mono"});
+    if(/Absences/.test(r.label))T(G,x(r.all.hi)+16,cy+6,"hold that thought",{"font-size":17,class:"t-a","font-style":"italic"});
+  });
+  T(svg,L,Tp-14,"hollow = not significant at 5%",{"font-size":16,class:"t-m"});
+})();
+
+/* ---- S7/S8: scatter */
+function scatter(name,mode){const w=1100,h=640,svg=mk(name,w,h);const L=70,R=w-20,Tp=40,B=h-70;
+  const x=sc(-1.2,33,L,R),y=sc(-1.4,20,B,Tp);
+  [0,5,10,15,20].forEach(v=>{E("line",{x1:L,x2:R,y1:y(v),y2:y(v),stroke:css("grid")},svg);T(svg,L-14,y(v)+6,v,{"text-anchor":"end","font-size":18,class:"t-m mono"});});
+  [0,5,10,15,20,25,30].forEach(v=>T(svg,x(v),B+32,v,{"text-anchor":"middle","font-size":18,class:"t-m mono"}));
+  T(svg,R,B+60,"recorded absences",{"text-anchor":"end","font-size":18,class:"t-m"});
+  T(svg,L-14,Tp-30,"final grade G3",{"font-size":18,class:"t-m"});
+  const dots=E("g",{},svg);let zero=null;
+  D.scatter.forEach(([a,g,n])=>{const isZ=(g===0&&a===0);const c=E("circle",{cx:x(a),cy:y(g),r:2.4+2.1*Math.sqrt(n),fill:css("data2"),"fill-opacity":.62,stroke:css("bg"),"stroke-width":1},dots);
+    tip(c,n+" student"+(n>1?"s":"")+": "+a+" absences, G3 = "+g);if(isZ)zero=c;});
+  const line=(fit,cls,step,d)=>{let p="";for(let a=0;a<=32;a+=.5){p+=(a?"L":"M")+x(a).toFixed(1)+" "+y(fit.a+fit.b*Math.log1p(a)).toFixed(1);}
+    return E("path",Object.assign({d:p,fill:"none","stroke-width":4,pathLength:1,"stroke-linecap":"round"},S("draw "+cls,step,d)),svg);};
+  const lA=line(D.simple_fit.all,"",0,.3);lA.setAttribute("stroke",css("ink2"));
+  if(mode==="A"){T(svg,x(33),y(D.simple_fit.all.a+D.simple_fit.all.b*Math.log1p(32))-16,"all 649 students",{"text-anchor":"end","font-size":19,class:"t-i"});return;}
+  // zero cell highlight
+  const zx=x(0),zy=y(0);
+  E("circle",Object.assign({cx:zx,cy:zy,r:28,fill:css("accentGlow")},S("glow",1)),svg);
+  const zc=E("circle",Object.assign({cx:zx,cy:zy,r:2.4+2.1*Math.sqrt(15),fill:css("accent"),stroke:css("bg"),"stroke-width":2},S("pop",1,.1)),svg);
+  tip(zc,"15 students: 0 absences, G3 = 0");
+  const ann=E("g",S("",1,.4),svg);
+  E("path",{d:`M${zx+26} ${zy-24} Q ${zx+90} ${zy-110} ${zx+150} ${zy-118}`,fill:"none",stroke:css("accent"),"stroke-width":2},ann);
+  T(ann,zx+160,zy-128,"15 students: final grade 0,",{"font-size":24,class:"t-a",style:"font-family:var(--serif)"});
+  T(ann,zx+160,zy-98,"absences 0",{"font-size":24,class:"t-a",style:"font-family:var(--serif)"});
+  const lN=line(D.simple_fit.nz,"",3,.1);lN.setAttribute("stroke",css("accent"));
+  const lab=E("g",S("",3,.9),svg);
+  T(lab,x(33),y(D.simple_fit.nz.a+D.simple_fit.nz.b*Math.log1p(32))+34,"without the 15",{"text-anchor":"end","font-size":19,class:"t-a"});
+  T(lab,x(33),y(D.simple_fit.all.a+D.simple_fit.all.b*Math.log1p(32))-16,"with them",{"text-anchor":"end","font-size":19,class:"t-m"});
+  // dim others at step 1-2
+  dots.classList.add("dimmable");
+}
+scatter("scatterA","A");scatter("scatterB","B");
+
+/* ---- S9: trajectories */
+(function(){const w=1100,h=620,svg=mk("traj",w,h);const L=80,R=w-170,Tp=20,B=h-70;
+  const x=i=>L+i*(R-L)/2,y=sc(0,20,B,Tp);
+  [0,5,10,15,20].forEach(v=>{E("line",{x1:L,x2:R,y1:y(v),y2:y(v),stroke:css("grid")},svg);T(svg,L-16,y(v)+6,v,{"text-anchor":"end","font-size":18,class:"t-m mono"});});
+  ["G1 · period 1","G2 · period 2","G3 · final"].forEach((s,i)=>T(svg,x(i),B+38,s,{"text-anchor":"middle","font-size":21,class:"t-i"}));
+  const t=D.traj;let band="M"+[0,1,2].map(i=>x(i)+" "+y(t.rest_q90[i])).join(" L")+" L"+[2,1,0].map(i=>x(i)+" "+y(t.rest_q10[i])).join(" L")+"Z";
+  E("path",Object.assign({d:band,fill:css("dataSoft")},S("",0,.1)),svg);
+  E("path",Object.assign({d:"M"+[0,1,2].map(i=>x(i)+" "+y(t.rest_median[i])).join(" L"),fill:"none",stroke:css("data2"),"stroke-width":3},S("",0,.2)),svg);
+  T(svg,R+14,y(t.rest_median[2])+6,"other 634",{"font-size":19,class:"t-m"});T(svg,R+14,y(t.rest_median[2])+30,"(median, middle 80%)",{"font-size":15,class:"t-m"});
+  t.zero.forEach((g,k)=>{const jit=(k-7)*.06;const p="M"+g.map((v,i)=>x(i)+" "+y(v+jit)).join(" L");
+    tip(E("path",Object.assign({d:p,fill:"none",stroke:css("accent"),"stroke-width":2.5,"stroke-opacity":.75,pathLength:1,"stroke-linejoin":"round"},S("draw",0,.4+k*.05)),svg),"G1 "+g[0]+" → G2 "+g[1]+" → G3 "+g[2]);});
+  T(svg,R+14,y(0)+6,"the 15",{"font-size":19,class:"t-a"});
+})();
+
+/* ---- S10: dumbbell */
+(function(){const w=1100,h=520,svg=mk("dumbbell",w,h);const L=300,R=w-40,Tp=30;const rows=D.before_after;
+  const x=sc(-1,1.6,L,R),rh=(h-Tp-60)/rows.length;
+  for(let v=-1;v<=1.5;v+=.5){E("line",{x1:x(v),x2:x(v),y1:Tp-10,y2:h-50,stroke:v===0?css("line"):css("grid"),"stroke-width":v===0?2:1},svg);
+    T(svg,x(v),h-20,(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(1),{"text-anchor":"middle","font-size":18,class:"t-m mono"});}
+  rows.forEach((r,i)=>{const cy=Tp+i*rh+rh/2;
+    T(svg,L-26,cy-2,r.course,{"text-anchor":"end","font-size":23,class:"t-i","font-weight":600});
+    T(svg,L-26,cy+24,r.model==="M3"?"M3 main model":"M4 + G1, G2",{"text-anchor":"end","font-size":18,class:"t-m"});
+    E("line",{x1:x(r.all.lo),x2:x(r.all.hi),y1:cy-12,y2:cy-12,stroke:css("data2"),"stroke-width":2,opacity:.7},svg);
+    E("line",Object.assign({x1:x(r.nz.lo),x2:x(r.nz.hi),y1:cy+12,y2:cy+12,stroke:css("accent"),"stroke-width":2,opacity:.8},S("",0,.6+i*.1)),svg);
+    E("path",Object.assign({d:`M${x(r.all.b)} ${cy} L${x(r.nz.b)} ${cy}`,stroke:css("ink2"),"stroke-width":2,pathLength:1,"stroke-dasharray":"1"},S("draw",0,.3+i*.1)),svg);
+    tip(E("circle",{cx:x(r.all.b),cy,r:11,fill:css("data2"),stroke:css("bg"),"stroke-width":2},svg),"All: "+fmt(r.all.b,"+2")+", p = "+r.all.p.toPrecision(2));
+    tip(E("circle",Object.assign({cx:x(r.nz.b),cy,r:12,fill:css("accent"),stroke:css("bg"),"stroke-width":2},S("pop",0,.8+i*.1)),svg),"G3 > 0: "+fmt(r.nz.b,"+2")+", p = "+r.nz.p.toPrecision(2));
+    const left=r.nz.b<r.all.b;
+    T(svg,x(r.all.b)+(left?18:-18),cy-20,fmt(r.all.b,"+2"),{"text-anchor":left?"start":"end","font-size":19,class:"t-m mono"});
+    const tn=T(svg,x(r.nz.b)+(left?-18:18),cy-20,fmt(r.nz.b,"+2"),Object.assign({"text-anchor":left?"end":"start","font-size":21},S("t-a mono",0,1)));
+  });
+  T(svg,x(-.95),Tp-14,"← absences cost grades",{"font-size":16,class:"t-m"});
+  T(svg,x(1.55),Tp-14,"absences “help” →",{"text-anchor":"end","font-size":16,class:"t-m"});
+})();
+
+/* ---- S11: A vs B */
+(function(){const w=1680,h=230,svg=mk("ab",w,h);const L=150,R=w-30;const x=sc(0,20,L,R);
+  [0,5,10,15,20].forEach(v=>{E("line",{x1:x(v),x2:x(v),y1:10,y2:h-40,stroke:css("grid")},svg);T(svg,x(v),h-12,v,{"text-anchor":"middle","font-size":18,class:"t-m mono"});});
+  const P=[["A",D.ab.A,D.ab.A_pi,40],["B",D.ab.B,D.ab.B_pi,130]];
+  P.forEach(([k,v,pi,cy])=>{const G=E("g",S("",1,k==="B"?.2:0),svg);
+    T(G,L-30,cy+8,"Student "+k,{"text-anchor":"end","font-size":22,class:"t-i"});
+    E("line",{x1:x(pi[0]),x2:x(pi[1]),y1:cy,y2:cy,stroke:k==="A"?css("accent"):css("data2"),"stroke-width":3,opacity:.6},G);
+    E("line",{x1:x(pi[0]),x2:x(pi[0]),y1:cy-10,y2:cy+10,stroke:k==="A"?css("accent"):css("data2"),"stroke-width":2},G);
+    E("line",{x1:x(pi[1]),x2:x(pi[1]),y1:cy-10,y2:cy+10,stroke:k==="A"?css("accent"):css("data2"),"stroke-width":2},G);
+    tip(E("circle",{cx:x(v),cy,r:13,fill:k==="A"?css("accent"):css("data2"),stroke:css("bg"),"stroke-width":3},G),"Student "+k+": "+v.toFixed(2)+" (95% PI "+pi[0]+"-"+pi[1]+")");
+    T(G,x(v),cy-22,v.toFixed(1),{"text-anchor":"middle","font-size":24,class:k==="A"?"t-a mono":"t-i mono"});
+    T(G,x(pi[1])+12,cy+7,pi[0].toFixed(1)+"-"+pi[1].toFixed(1),{"font-size":16,class:"t-m mono"});});
+})();
+
+/* ---- B1 overlap: proportional bars */
+(function(){const w=1100,h=560,svg=mk("overlap",w,h);if(!svg)return;const o=D.overlap;const x=sc(0,649,0,w-140);
+  const row=(y,title,total,matched,sub)=>{T(svg,0,y-16,title,{"font-size":22,class:"t-i","font-weight":600});
+    E("rect",{x:0,y,width:x(total),height:44,rx:5,fill:css("surface2")},svg);
+    E("rect",{x:0,y,width:x(matched),height:44,rx:5,fill:css("accent")},svg);
+    T(svg,x(matched)/2,y+29,matched+" matched",{"text-anchor":"middle","font-size":19,style:"fill:#15120a"});
+    T(svg,x(total)+14,y+29,String(total),{"font-size":19,class:"t-m mono"});
+    T(svg,0,y+72,sub,{"font-size":17,class:"t-m"});};
+  row(60,"Maths file",395,o.mat_rows_matched,"rows with a Portuguese record on the 13 matching attributes");
+  row(200,"Portuguese file",649,o.por_rows_matched,"rows with a maths record (duplicates make the two counts differ)");
+  T(svg,0,350,"Zero-grade students",{"font-size":22,class:"t-i","font-weight":600});
+  const z=[["maths",38],["Portuguese",15],["zero in both",o.both_zero]];
+  z.forEach((r,i)=>{const y=380+i*52;E("rect",{x:150,y,width:x(r[1])*4,height:34,rx:4,fill:i===2?css("accent"):css("data2")},svg);
+    T(svg,0,y+24,r[0],{"font-size":19,class:"t-m"});T(svg,150+x(r[1])*4+12,y+24,String(r[1]),{"font-size":19,class:"t-i mono"});});
+  T(svg,0,h-6,"Zero-grade bars drawn at 4x the scale of the file bars.",{"font-size":15,class:"t-m"});
+})();
+
+/* ---- B2 ladder table */
+(function(){const t=document.getElementById("ladderTable");if(!t)return;
+  let s="<tr><th>Model</th><th>All: study time [95% CI]</th><th>p</th><th>R²</th><th>G3 &gt; 0: study time [95% CI]</th><th>p</th><th>R²</th></tr>";
+  const lab=["M1 study time only","M2 + academic / demographic","M3 + family / social","M4 + G1, G2"];
+  for(let i=0;i<4;i++){const a=D.ladder.all[i],b=D.ladder.nz[i];
+    const p=v=>v<0.001?"&lt; 0.001":v.toFixed(3);
+    s+=`<tr><td>${lab[i]}</td><td>${fmt(a.b,"+2")} [${fmt(a.lo,"+2")}, ${fmt(a.hi,"+2")}]</td><td>${p(a.p)}</td><td>${a.r2.toFixed(2)}</td><td>${fmt(b.b,"+2")} [${fmt(b.lo,"+2")}, ${fmt(b.hi,"+2")}]</td><td>${p(b.p)}</td><td>${b.r2.toFixed(2)}</td></tr>`;}
+  t.innerHTML=s;})();
+
+/* ------------------------------------------------------------ count-up */
+function countTo(el,from,to,f){if(!el)return;const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches||document.body.classList.contains("static");
+  if(reduce||from===to){put(el,fmt(to,f));return;}
+  const t0=performance.now(),dur=1100;cancelAnimationFrame(el._raf);
+  const tick=t=>{const k=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-k,3);put(el,fmt(from+(to-from)*e,f));if(k<1)el._raf=requestAnimationFrame(tick);};
+  el._raf=requestAnimationFrame(tick);}
+
+/* ------------------------------------------------------------ deck engine */
+const stage=document.getElementById("stage"),vp=document.getElementById("viewport");
+const all=[...stage.querySelectorAll(".slide")];
+const main=all.filter(s=>!s.dataset.backup),backup=all.filter(s=>s.dataset.backup);
+let list=main,idx=0,step=0,returnTo=0;
+const params=new URLSearchParams(location.search);
+const SHOT=params.has("shot");
+if(SHOT)document.body.classList.add("static");
+const HOOKS={s5:ladHook};
+let guess=null;
+
+function fit(){const notes=document.body.classList.contains("notes");
+  const W=innerWidth,H=notes?innerHeight*0.62:innerHeight;vp.style.bottom=notes?(innerHeight-H)+"px":"0";
+  const k=Math.min(W/1920,H/1080);stage.style.transform=`translate(${(W-1920*k)/2}px,${(H-1080*k)/2}px) scale(${k})`;}
+addEventListener("resize",fit);
+
+function applyStep(sl,st,prev){
+  sl.querySelectorAll(".s").forEach(e=>{const n=+e.dataset.s;e.classList.toggle("on",st>=n);});
+  sl.querySelectorAll("[data-hide]").forEach(e=>e.classList.toggle("off",st>=+e.dataset.hide));
+  sl.querySelectorAll(".count").forEach(e=>{const host=e.closest(".s");const vis=!host||host.classList.contains("on");
+    if(vis&&!e._done){e._done=1;countTo(e,0,+e.dataset.final,e.dataset.f);}if(!vis)e._done=0;});
+  // scatter dimming on paradox slide
+  if(sl.id==="s8"){const d=sl.querySelector(".dimmable");if(d)d.classList.toggle("dim",st>=1&&st<3);}
+  if(HOOKS[sl.id])HOOKS[sl.id](sl,st,prev);
+}
+function resetSlide(sl){sl.querySelectorAll(".s").forEach(e=>e.classList.remove("on"));sl.querySelectorAll(".count").forEach(e=>e._done=0);}
+
+function show(i,st,instant){
+  const prevSl=list[idx];i=Math.max(0,Math.min(list.length-1,i));
+  const sl=list[i];const changed=sl!==prevSl;
+  all.forEach(s=>s.classList.toggle("current",s===sl));
+  if(changed&&prevSl)resetSlide(prevSl);
+  const max=+sl.dataset.steps||0;const target=st==null?0:st<0?max:Math.min(st,max);
+  const prev=changed?null:step;
+  idx=i;step=target;
+  if(changed&&!SHOT&&!instant){requestAnimationFrame(()=>requestAnimationFrame(()=>applyStep(sl,target,prev)));}
+  else applyStep(sl,target,prev);
+  const isB=list===backup;
+  document.getElementById("progress").style.width=((i+1)/list.length*100)+"%";
+  document.getElementById("progress").classList.toggle("backup",isB);
+  document.getElementById("counter").textContent=(isB?"BACKUP B"+(i+1)+" / B"+list.length:(i+1)+" / "+list.length)+(max?"  ·  "+target+"/"+max:"");
+  history.replaceState(null,"",(SHOT?"?shot":"")+"#"+(isB?"b"+(i+1):(i+1)+(target?"."+target:"")));
+  renderNotes();
+}
+function next(){const max=+list[idx].dataset.steps||0;if(step<max)show(idx,step+1);else if(idx<list.length-1)show(idx+1,0);}
+function prev(){if(step>0)show(idx,step-1);else if(idx>0)show(idx-1,-1);}
+function toggleBackup(){if(list===main){returnTo=idx;list=backup;idx=-1;show(0,0);}else{list=main;idx=-1;show(returnTo,-1);}}
+
+/* notes */
+let t0=null;
+function renderNotes(){const sl=list[idx],n=sl.querySelector("aside.notes");
+  document.getElementById("nBody").innerHTML=n?n.innerHTML:"<p>No notes.</p>";
+  const nx=list[idx+1];const h=nx?(nx.querySelector(".hl")||nx.querySelector(".title")):null;
+  document.getElementById("nMeta").innerHTML=(sl.dataset.time?"Slide budget "+sl.dataset.time+"<br>":"")+(n&&n.dataset.speaker?n.dataset.speaker+"<br>":"")+(n&&n.dataset.concept?"Concept: "+n.dataset.concept:"");
+  document.getElementById("nNext").textContent=h?"Next: "+h.textContent.trim().replace(/\s+/g," "):"";}
+setInterval(()=>{if(t0==null)return;const s=Math.floor((Date.now()-t0)/1000);document.getElementById("nClock").textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0");},500);
+document.getElementById("nClock").addEventListener("click",()=>{t0=Date.now();});
+
+/* overview */
+function buildOverview(){const ov=document.getElementById("overview");ov.innerHTML="";
+  [["Main flow",main],["Backup",backup]].forEach(([title,L])=>{const h=document.createElement("h3");h.textContent=title;ov.appendChild(h);
+    const g=document.createElement("div");g.className="ov-grid";ov.appendChild(g);
+    L.forEach((s,i)=>{const t=document.createElement("div");t.className="thumb"+(L===list&&i===idx?" cur":"");
+      const lab=document.createElement("div");lab.className="lab";lab.textContent=(L===backup?"B":"")+(i+1);t.appendChild(lab);
+      const inner=document.createElement("div");inner.className="inner all";const c=s.cloneNode(true);c.querySelectorAll("[id]").forEach(e=>e.removeAttribute("id"));
+      c.classList.add("current");inner.appendChild(c);t.appendChild(inner);g.appendChild(t);
+      t.addEventListener("click",()=>{document.body.classList.remove("overview");if(L!==list){if(L===backup)returnTo=idx;list=L;}idx=-1;show(i,0);});
+      requestAnimationFrame(()=>{inner.style.transform="scale("+(t.clientWidth/1920)+")";});});});}
+
+/* theme */
+function setTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem("storydeck-theme",t);}catch(e){}}
+try{const t=localStorage.getItem("storydeck-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}
+if(params.get("theme"))document.documentElement.dataset.theme=params.get("theme");
+
+/* guess */
+function setGuess(v){guess=Math.max(0,Math.min(20,v));const s=guess.toFixed(1);document.getElementById("gv").textContent=s;
+  document.getElementById("guessEcho").innerHTML='Class guess: <span class="acc">'+s+'</span>';
+  document.getElementById("guessEcho2").innerHTML=' Your guess: <span class="acc num">'+s+'</span>.';}
+document.querySelectorAll("[data-g]").forEach(b=>b.addEventListener("click",e=>{e.stopPropagation();setGuess((guess==null?2:guess)+ +b.dataset.g);}));
+
+/* votes */
+const votes={A:0,B:0};
+document.querySelectorAll("[data-vote]").forEach(c=>c.addEventListener("click",e=>{e.stopPropagation();const k=c.dataset.vote;votes[k]++;
+  document.querySelector('[data-vc="'+k+'"]').textContent=votes[k]+" hand"+(votes[k]>1?"s":"");}));
+
+/* input */
+addEventListener("keydown",e=>{if(e.metaKey||e.ctrlKey||e.altKey)return;const k=e.key;
+  if(t0==null&&["ArrowRight","ArrowDown"," ","PageDown","Enter"].includes(k))t0=Date.now();
+  if(document.body.classList.contains("overview")&&k!=="o"&&k!=="O"&&k!=="Escape")return;
+  switch(k){
+    case "ArrowRight":case "ArrowDown":case " ":case "PageDown":case "Enter":e.preventDefault();next();break;
+    case "ArrowLeft":case "ArrowUp":case "PageUp":case "Backspace":e.preventDefault();prev();break;
+    case "Home":show(0,0);break; case "End":show(list.length-1,0);break;
+    case "n":case "N":document.body.classList.toggle("notes");fit();break;
+    case "o":case "O":document.body.classList.toggle("overview");if(document.body.classList.contains("overview"))buildOverview();break;
+    case "Escape":document.body.classList.remove("overview");if(list===backup)toggleBackup();break;
+    case "f":case "F":if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();break;
+    case "t":case "T":setTheme(document.documentElement.dataset.theme==="light"?"dark":"light");break;
+    case "b":case "B":toggleBackup();break;
+    case "[":setGuess((guess==null?2.5:guess)-0.5);break; case "]":setGuess((guess==null?1.5:guess)+0.5);break;
+    case "?":case "h":document.body.classList.toggle("show-hint");break;
+  }});
+vp.addEventListener("click",e=>{if(e.target.closest("button,[data-vote],a,input"))return;if(t0==null)t0=Date.now();
+  (e.clientX<innerWidth*0.28?prev:next)();});
+let tx=null;addEventListener("touchstart",e=>{tx=e.touches[0].clientX;},{passive:true});
+addEventListener("touchend",e=>{if(tx==null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50)(dx<0?next:prev)();tx=null;});
+addEventListener("beforeprint",()=>all.forEach(s=>applyStep(s,99,null)));
+addEventListener("afterprint",()=>all.forEach(s=>{if(s!==list[idx])resetSlide(s);}));
+
+/* start */
+fit();
+const h=location.hash.slice(1);
+if(/^b\d+/.test(h)){list=backup;show(+h.slice(1)-1,0,true);}
+else if(h){const [a,b]=h.split(".");show((+a||1)-1,b!=null?+b:(SHOT?-1:0),true);}
+else show(0,0);
+if(params.has("notes")){document.body.classList.add("notes");fit();}
+if(params.has("overview")){document.body.classList.add("overview");buildOverview();}
+if(!SHOT){document.body.classList.add("show-hint");setTimeout(()=>document.body.classList.remove("show-hint"),5000);}
+})();
+</script>
+</body>
+</html>

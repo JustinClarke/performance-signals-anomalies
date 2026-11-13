@@ -1,0 +1,36 @@
+variable,dtype,n_unique,levels_or_range,description
+school,object,2,"GP, MS","student's school (GP = Gabriel Pereira, MS = Mousinho da Silveira)"
+sex,object,2,"F, M","student's sex (F, M)"
+age,int64,8,15 to 22,age in years (15-22)
+address,object,2,"R, U","home address type (U = urban, R = rural)"
+famsize,object,2,"GT3, LE3","family size (LE3 = <=3, GT3 = >3)"
+Pstatus,object,2,"A, T","parents' cohabitation (T = together, A = apart)"
+Medu,int64,5,"0, 1, 2, 3, 4","mother's education (0 none, 1 primary, 2 5th-9th grade, 3 secondary, 4 higher)"
+Fedu,int64,5,"0, 1, 2, 3, 4",father's education (same coding as Medu)
+Mjob,object,5,"at_home, health, other, services, teacher","mother's job (teacher, health, services, at_home, other)"
+Fjob,object,5,"at_home, health, other, services, teacher",father's job (same levels as Mjob)
+reason,object,4,"course, home, other, reputation","reason for choosing school (home, reputation, course, other)"
+guardian,object,3,"father, mother, other","student's guardian (mother, father, other)"
+traveltime,int64,4,"1, 2, 3, 4","home-school travel time (1 <15 min, 2 15-30 min, 3 30-60 min, 4 >1 h)"
+studytime,int64,4,"1, 2, 3, 4","weekly study time (1 <2 h, 2 2-5 h, 3 5-10 h, 4 >10 h) - ordinal category, not hours"
+failures,int64,4,"0, 1, 2, 3","number of past class failures (n if 1<=n<3, else 4)"
+schoolsup,object,2,"no, yes",extra educational support from school (yes/no)
+famsup,object,2,"no, yes",family educational support (yes/no)
+paid,object,2,"no, yes",extra paid classes in the subject (yes/no)
+activities,object,2,"no, yes",extra-curricular activities (yes/no)
+nursery,object,2,"no, yes",attended nursery school (yes/no)
+higher,object,2,"no, yes",wants to take higher education (yes/no)
+internet,object,2,"no, yes",internet access at home (yes/no)
+romantic,object,2,"no, yes",in a romantic relationship (yes/no)
+famrel,int64,5,"1, 2, 3, 4, 5",quality of family relationships (1 very bad - 5 excellent)
+freetime,int64,5,"1, 2, 3, 4, 5",free time after school (1 very low - 5 very high)
+goout,int64,5,"1, 2, 3, 4, 5",going out with friends (1 very low - 5 very high)
+Dalc,int64,5,"1, 2, 3, 4, 5",workday alcohol consumption (1 very low - 5 very high)
+Walc,int64,5,"1, 2, 3, 4, 5",weekend alcohol consumption (1 very low - 5 very high)
+health,int64,5,"1, 2, 3, 4, 5",current health status (1 very bad - 5 very good)
+absences,int64,24,0 to 32,number of school absences (0-93)
+G1,int64,17,0 to 19,first-period grade (0-20)
+G2,int64,16,0 to 19,second-period grade (0-20)
+G3,int64,17,0 to 19,"final grade (0-20), the outcome"
+zero_grade,bool,2,"False, True","DERIVED: True if G3 == 0 (zero-grade case; read as an apparent dropout, which is our interpretation and not recorded in the dataset; see notebooks 01 and 04)"
+log_abs,float64,24,0.0 to 3.4965075614664802,DERIVED: log(absences + 1)

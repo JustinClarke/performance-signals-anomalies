@@ -1,0 +1,24 @@
+check,sample,statistic,p_value,light,action,detail
+Multicollinearity (max VIF),G3 > 0,1.9890356388329826,,green,no action,"max = Walc; Medu 1.92, Fedu 1.78, Dalc 1.74, Walc 1.99"
+Multicollinearity (max VIF),all,1.9706673252765532,,green,no action,"max = Walc; Medu 1.91, Fedu 1.78, Dalc 1.71, Walc 1.97"
+"Heteroskedasticity, Breusch-Pagan (M3)",G3 > 0,24.156374470411166,0.23562813669514104,green,none needed; HC3 used anyway,LM test on OLS residuals
+"Heteroskedasticity, White (M3)",G3 > 0,257.82200646583277,0.04513726114009923,amber,HC3 robust SEs,"special form (yhat, yhat^2): LM 4.4, p 0.112"
+"Heteroskedasticity, Breusch-Pagan (M3)",all,86.11643041029268,3.5115176810372887e-10,red,HC3 robust SEs,LM test on OLS residuals
+"Heteroskedasticity, White (M3)",all,347.3069437400977,1.1769047300284573e-07,red,HC3 robust SEs,"special form (yhat, yhat^2): LM 11.2, p 0.00371"
+"Heteroskedasticity, Breusch-Pagan (M4)",G3 > 0,39.66321339089582,0.0118334363312678,amber,HC3 robust SEs,LM test on OLS residuals
+"Heteroskedasticity, White (M4)",G3 > 0,385.77040218017015,2.1321495900536553e-06,red,HC3 robust SEs,"special form (yhat, yhat^2): LM 2.7, p 0.253"
+"Heteroskedasticity, Breusch-Pagan (M4)",all,55.006951037054556,0.00011849964162817226,red,HC3 robust SEs,LM test on OLS residuals
+"Heteroskedasticity, White (M4)",all,399.2738644134924,2.1910339062909866e-07,red,HC3 robust SEs,"special form (yhat, yhat^2): LM 22.2, p 1.48e-05"
+HC3 robust SEs (M3),G3 > 0,1.121708401987642,,green,report HC3 throughout,HC3/OLS SE ratio range 0.90-1.12 over key terms; significance at 5% changes for 0 of 7
+HC3 robust SEs (M3),all,1.1154069857120938,,green,report HC3 throughout,HC3/OLS SE ratio range 0.93-1.12 over key terms; significance at 5% changes for 1 of 7
+"Normality of residuals, Jarque-Bera (M3)",G3 > 0,5.83944454921813,0.053948668134928844,green,no action,"skew 0.05, kurtosis 3.46"
+"Normality of residuals, Jarque-Bera (M3)",all,392.1272418599945,7.090083144539123e-86,amber,"large n, CLT; inference via HC3","skew -0.90, kurtosis 6.35"
+"Influence, Cook's distance (M3)",G3 > 0,0.03683636119601895,,green,no single point dominates,35 points > 4/n; zero-grade cases in top 10: 0; none > 1
+"Influence, Cook's distance (M3)",all,0.049207358695764813,,green,no single point dominates,37 points > 4/n; zero-grade cases in top 10: 8; none > 1
+"Functional form, RESET power 2 (M3, log(abs+1))",G3 > 0,17.711114775968884,2.9567080323501627e-05,amber,report openly; bounded 0-20 outcome,"powers 2-3: F 11.10, p 1.85e-05"
+"Functional form, RESET power 2 (M3, raw absences)",G3 > 0,20.04655860239295,9.016763712184266e-06,amber,report openly; bounded 0-20 outcome,"powers 2-3: F 11.49, p 1.26e-05"
+"Functional form, RESET power 2 (M4, log(abs+1))",G3 > 0,0.6909747840314894,0.4061582707793086,green,no action,"powers 2-3: F 5.89, p 0.00292"
+"Functional form, RESET power 2 (M3, log(abs+1))",all,13.644989069954137,0.0002401074942139694,amber,report openly; bounded 0-20 outcome,"powers 2-3: F 7.54, p 0.000579"
+"Functional form, RESET power 2 (M3, raw absences)",all,12.528100364512497,0.00043055205405266947,amber,report openly; bounded 0-20 outcome,"powers 2-3: F 7.16, p 0.00084"
+"Functional form, RESET power 2 (M4, log(abs+1))",all,11.006343433946876,0.0009606865811293057,amber,report openly; bounded 0-20 outcome,"powers 2-3: F 5.97, p 0.0027"
+Autocorrelation (Durbin-Watson),G3 > 0,1.777682004594825,,n/a,cross-sectional data,"not applicable (cross-section); DW sorted by G3 = 0.64, shows the statistic depends on arbitrary row order"

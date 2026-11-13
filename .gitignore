@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local OS and tool artifacts
+.DS_Store
+firebase-debug.log
+firestore-debug.log
+log.json
+
+# Firebase CLI cache
+.firebase/
+.firebaserc
+
+# JavaScript dependencies
+node_modules/
+
+# Survey exports and respondent-level data
+survey/results/
+data/processed/bits_survey_clean.csv
+survey/app/snapshot/*.html
+survey/app/tools/seed_100_timed_responses.mjs
+survey/app/tools/clean_batch_100.mjs

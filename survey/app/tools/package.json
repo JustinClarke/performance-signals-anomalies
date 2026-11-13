@@ -1,0 +1,1 @@
+{ "name": "seed-demo", "private": true, "type": "module", "dependencies": { "firebase": "11.0.2" } }

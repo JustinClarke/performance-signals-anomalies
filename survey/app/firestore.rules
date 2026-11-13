@@ -1,0 +1,90 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Survey answers: clients may create one document, and nothing else.
+    match /responses/{id} {
+      allow create: if validResponse(request.resource.data);
+      allow read: if isOwner();
+      allow update, delete: if false;
+    }
+
+    // Dashboard access requests: public create only, strictly shaped.
+    match /access_requests/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['email','source','submittedAt'])
+        && request.resource.data.keys().hasAll(['email','source','submittedAt'])
+        && request.resource.data.email is string
+        && request.resource.data.email.size() >= 3
+        && request.resource.data.email.size() <= 254
+        && request.resource.data.email.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$')
+        && request.resource.data.source == 'survey'
+        && request.resource.data.submittedAt == request.time;
+      allow read, delete: if isOwner();
+      allow update: if false;
+    }
+
+    // FAKE preview data, same shape as responses. Never mixed with real data.
+    match /demo_responses/{id} {
+      allow create: if validResponse(request.resource.data);
+      allow read, delete: if isOwner();
+      allow update: if false;
+    }
+
+    // Precomputed cohort aggregates: public read, written only by the owner
+    // (Admin SDK / console / Cloud Function, which bypass these rules).
+    match /aggregates/cohort {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Everything else is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isOwner() {
+      return request.auth != null && request.auth.uid == 'PQgD2frhpqZmTglmcj5a1CB8DR02';
+    }
+
+    function validResponse(d) {
+      return d.keys().hasOnly([
+          'consent','sex','age','address','famsize','Pstatus','Medu','Fedu','Mjob','Fjob',
+          'traveltime','internet','famrel','health','studytime','failures',
+          'schoolsup','famsup','paid','activities','higher','absences',
+          'freetime','goout','Dalc','Walc','G3_pct','submittedAt'])
+        && d.keys().hasAll([
+          'consent','sex','age','address','famsize','Pstatus','Medu','Fedu','Mjob','Fjob',
+          'traveltime','internet','famrel','health','studytime','failures',
+          'schoolsup','famsup','paid','activities','higher','absences',
+          'freetime','goout','Dalc','Walc','G3_pct','submittedAt'])
+        && d.submittedAt == request.time
+        && d.consent == 'yes'
+        && d.sex in ['F','M']
+        && d.age is int && d.age >= 18 && d.age <= 70
+        && d.address in ['U','R']
+        && d.famsize in ['LE3','GT3']
+        && d.Pstatus in ['T','A']
+        && d.Medu is int && d.Medu >= 0 && d.Medu <= 4
+        && d.Fedu is int && d.Fedu >= 0 && d.Fedu <= 4
+        && d.Mjob in ['at_home','health','services','teacher','other']
+        && d.Fjob in ['at_home','health','services','teacher','other']
+        && d.traveltime is int && d.traveltime >= 1 && d.traveltime <= 4
+        && d.internet in ['yes','no']
+        && d.famrel is int && d.famrel >= 1 && d.famrel <= 5
+        && d.health is int && d.health >= 1 && d.health <= 5
+        && d.studytime is int && d.studytime >= 1 && d.studytime <= 4
+        && d.failures is int && d.failures >= 0 && d.failures <= 3
+        && d.schoolsup in ['yes','no']
+        && d.famsup in ['yes','no']
+        && d.paid in ['yes','no']
+        && d.activities in ['yes','no']
+        && d.higher in ['yes','no']
+        && d.absences is int && d.absences >= 0 && d.absences <= 93
+        && d.freetime is int && d.freetime >= 1 && d.freetime <= 5
+        && d.goout is int && d.goout >= 1 && d.goout <= 5
+        && d.Dalc is int && d.Dalc >= 1 && d.Dalc <= 5
+        && d.Walc is int && d.Walc >= 1 && d.Walc <= 5
+        && d.G3_pct is number && d.G3_pct >= 0 && d.G3_pct <= 100;
+    }
+  }
+}

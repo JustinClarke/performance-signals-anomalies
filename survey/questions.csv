@@ -1,0 +1,28 @@
+order,section,question,column,type,options,required,uci_equivalent,notes
+1,Consent,I'm okay with my anonymous answers being used in our class statistics project. I can stop any time.,consent,single,Yes=yes|No=no,yes,,
+2,About you,What's your gender?,sex,single,Female=F|Male=M,yes,sex,
+3,About you,How old are you?,age,number,18-70,yes,age,UCI range is 15-22; widened for postgraduates
+4,About you,"Where's home, mainly?",address,single,Urban=U|Rural=R,yes,address,
+5,About you,"How many people live in your home, including you?",famsize,single,3 or fewer=LE3|More than 3=GT3,yes,famsize,
+6,About you,Do your parents live together?,Pstatus,single,Together=T|Apart=A,yes,Pstatus,
+7,About you,What's the highest level of education your mother completed?,Medu,single,No schooling=0|Primary (up to class 5)=1|Middle school (class 6-8)=2|Secondary / high school=3|Graduate or above=4,yes,Medu,Labels adapted to Indian school system
+8,About you,What's the highest level of education your father completed?,Fedu,single,No schooling=0|Primary (up to class 5)=1|Middle school (class 6-8)=2|Secondary / high school=3|Graduate or above=4,yes,Fedu,Labels adapted to Indian school system
+9,About you,What does your mother mainly do for work?,Mjob,single,At home=at_home|Health=health|Services=services|Teacher=teacher|Other=other,yes,Mjob,
+10,About you,What does your father mainly do for work?,Fjob,single,At home=at_home|Health=health|Services=services|Teacher=teacher|Other=other,yes,Fjob,
+11,About you,How long does it take you to get to campus?,traveltime,single,Under 15 min=1|15-30 min=2|30-60 min=3|Over 60 min=4,yes,traveltime,
+12,About you,Do you have internet at home?,internet,single,Yes=yes|No=no,yes,internet,
+13,About you,How would you rate things with your family?,famrel,scale,Very bad=1|2|3|4|Excellent=5,yes,famrel,
+14,About you,How's your health right now?,health,scale,Very bad=1|2|3|4|Very good=5,yes,health,
+15,Study habits,"In a normal week, how long do you study outside class?",studytime,single,Under 2 h=1|2-5 h=2|5-10 h=3|More than 10 h=4,yes,studytime,"Ordinal category, not hours (same as UCI)"
+16,Study habits,How many courses have you failed before?,failures,single,0=0|1=1|2=2|3 or more=3,yes,failures,
+17,Study habits,Do you get extra help with your studies outside regular classes?,schoolsup,single,Yes=yes|No=no,yes,schoolsup,"Generalised for an Indian audience (covers college help, not just paid tuition)"
+18,Study habits,Does anyone at home help with your coursework?,famsup,single,Yes=yes|No=no,yes,famsup,
+19,Study habits,Do you go to paid coaching or private tuition for any subject?,paid,single,Yes=yes|No=no,yes,paid,Coaching centres and private tuition are common in India
+20,Study habits,"Are you in any clubs, sports or other activities?",activities,single,Yes=yes|No=no,yes,activities,
+21,Study habits,Do you plan to do a PhD?,higher,single,Yes=yes|No=no,yes,higher,Meaning differs: UCI asks about higher education in general
+22,Study habits,About how many classes did you miss this semester?,absences,number,0-93,yes,absences,Analysed as log(absences+1)
+23,Social life,How much free time do you get after classes?,freetime,scale,Very low=1|2|3|4|Very high=5,yes,freetime,
+24,Social life,How often do you go out with friends?,goout,scale,Very low=1|2|3|4|Very high=5,yes,goout,
+25,Social life,How much alcohol do you usually drink on a workday?,Dalc,scale,Very low=1|2|3|4|Very high=5,yes,Dalc,
+26,Social life,How much alcohol do you usually drink on a weekend day?,Walc,scale,Very low=1|2|3|4|Very high=5,yes,Walc,
+27,Grades,"What did you score in your most recent graded course, as a percentage?",G3_pct,number,0-100,yes,G3,"Outcome. Pooled across courses and grading systems, so treat as approximate. Converted to 0-20: G3 = round(pct/5)"

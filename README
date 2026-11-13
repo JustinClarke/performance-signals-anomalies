@@ -1,0 +1,68 @@
+# Student Performance: Signals & Anomalies
+
+An end-to-end statistics and econometrics project examining how study time,
+prior achievement, absences, and student background relate to secondary-school
+grades. The analysis uses the UCI Student Performance records for Portuguese and
+maths courses.
+
+The central finding is a data-quality puzzle: every record with a final grade
+of zero also has zero recorded absences. These cases distort the estimated
+relationship between absences and grades. The notebooks investigate the pattern,
+compare results with and without the zero-grade cases, and check whether it
+replicates in the maths records. “Apparent dropout” is an interpretation of the
+pattern; the dataset does not document why those grades are zero.
+
+## What’s inside
+
+- Eight ordered Jupyter notebooks, from source-data checks through exploratory
+  analysis, inference, regression, robustness checks, diagnostics, and figures.
+- Reproducible result tables in `results/` and figures in `figures/`.
+- Presentation material and a detailed project write-up in `presentation/`
+  and [`readme.md`](readme.md).
+- An optional cohort survey and Firebase app in `survey/`. It is separate from
+  the UCI analysis and is not needed to reproduce the notebooks.
+
+## Reproduce the analysis
+
+Use Python 3. Install the dependencies from the repository root:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+Then run the notebooks in order from the `notebooks/` directory. Their paths
+are relative to that directory, and later notebooks use files produced by
+earlier ones:
+
+```bash
+cd notebooks
+for notebook in 00_data_acquisition 01_exploratory_analysis 02_hypothesis_testing 03_regression_models 04_zero_grades_and_absences 05_diagnostics 06_final_results 07_visual_showcase; do
+  jupyter nbconvert --to notebook --execute --inplace "${notebook}.ipynb"
+done
+```
+
+The raw CSV files are included under `data/raw/`. Notebook `00` checks their
+shape, values, and recorded SHA-256 hashes before creating processed copies.
+
+## Main methods
+
+The notebooks use descriptive analysis, confidence intervals, Welch tests,
+ANOVA and post-hoc comparisons, ANCOVA, MANOVA/MANCOVA, Fisher’s exact tests,
+and OLS regression with HC3 robust standard errors. They also examine
+alternative absence specifications, zero-grade handling, VIF, heteroskedasticity,
+residuals, influence, RESET, and endogeneity limitations.
+
+The study is observational. The estimated relationships are associations, not
+causal effects. The source data cover two Portuguese secondary schools in
+2005–06; study time is self-reported and measured in four categories.
+
+## Data source and attribution
+
+Cortez, P. (2008). *Student Performance* [Dataset]. UCI Machine Learning
+Repository. [https://doi.org/10.24432/C5TG7T](https://doi.org/10.24432/C5TG7T).
+The dataset is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+
+## License
+
+No license has been added for this repository’s code or original materials.
+The UCI dataset retains its own license and attribution requirements.
